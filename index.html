@@ -355,11 +355,63 @@ function fmtDur(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h
 function fmtKm(m){return (m/1000).toFixed(1)+' km';}
 
 // ── STRAVA AUTH ──
+// Sur iOS PWA, window.location.href quitte l'app et la réinitialise au retour.
+// Solution : on affiche un écran intermédiaire qui demande à l'utilisateur
+// d'ouvrir le lien dans Safari, puis de coller le "code" depuis l'URL de retour.
 function stravaAction(){
   if(D.strava.token){disconnectStrava();return;}
   const scope='activity:read_all';
-  const url=`https://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT)}&response_type=code&scope=${scope}`;
-  window.location.href=url;
+  const url='https://www.strava.com/oauth/authorize?client_id='+CLIENT_ID+'&redirect_uri='+encodeURIComponent(REDIRECT)+'&response_type=code&scope='+scope;
+  showStravaModal(url);
+}
+
+function showStravaModal(url){
+  const overlay=document.createElement('div');
+  overlay.id='strava-overlay';
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(44,31,14,0.7);z-index:500;display:flex;align-items:flex-end;padding:0;';
+  overlay.innerHTML=`
+    <div style="background:var(--bg);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-height:90dvh;overflow-y:auto;">
+      <div style="font-family:var(--fd);font-size:1.1rem;color:var(--t);margin-bottom:8px;font-style:italic;">Connexion Strava</div>
+      <p style="font-size:.78rem;color:var(--t2);line-height:1.6;margin-bottom:16px;">Sur iPhone, la connexion se fait en 3 étapes rapides :</p>
+      <div style="background:var(--bg2);border-radius:var(--r);padding:14px;margin-bottom:14px;">
+        <div style="font-size:.72rem;color:var(--t);font-weight:500;margin-bottom:6px;">① Ouvre ce lien dans Safari</div>
+        <a href="${url}" target="_blank" style="display:block;background:var(--or);color:#fff;text-align:center;padding:11px;border-radius:var(--rs);font-size:.82rem;font-weight:500;text-decoration:none;">Autoriser sur Strava →</a>
+      </div>
+      <div style="background:var(--bg2);border-radius:var(--r);padding:14px;margin-bottom:14px;">
+        <div style="font-size:.72rem;color:var(--t);font-weight:500;margin-bottom:4px;">② Après autorisation, copie le <em>code</em> depuis l'URL</div>
+        <div style="font-size:.68rem;color:var(--t3);line-height:1.5;margin-bottom:8px;">L'URL ressemblera à :<br><code style="font-size:.65rem;background:var(--bg3);padding:2px 6px;border-radius:4px;">…netlify.app?code=<strong>XXXXXXXX</strong>&…</code><br>Copie uniquement la partie après <code style="font-size:.65rem;">code=</code> jusqu'au prochain <code style="font-size:.65rem;">&</code></div>
+      </div>
+      <div style="background:var(--bg2);border-radius:var(--r);padding:14px;margin-bottom:20px;">
+        <div style="font-size:.72rem;color:var(--t);font-weight:500;margin-bottom:8px;">③ Colle le code ici</div>
+        <input id="strava-code-input" type="text" placeholder="Colle le code ici…" style="width:100%;background:var(--sf);border:1px solid var(--b2);border-radius:var(--rs);padding:9px 11px;font-family:var(--fb);font-size:.82rem;color:var(--t);outline:none;"/>
+        <button onclick="submitStravaCode()" style="width:100%;margin-top:9px;background:var(--gr);color:#fff;padding:11px;border-radius:var(--rs);font-size:.82rem;font-weight:500;border:none;cursor:pointer;">Valider le code</button>
+      </div>
+      <button onclick="document.getElementById('strava-overlay').remove()" style="width:100%;padding:11px;border-radius:var(--rs);font-size:.82rem;color:var(--t2);background:var(--bg2);border:1px solid var(--b2);">Annuler</button>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function submitStravaCode(){
+  const input=document.getElementById('strava-code-input');
+  const code=(input?input.value:'').trim();
+  if(!code){input.style.borderColor='var(--re)';return;}
+  document.getElementById('strava-overlay').remove();
+  toast('Connexion en cours…');
+  try{
+    const res=await fetch(TOKEN_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,grant_type:'authorization_code'})});
+    const data=await res.json();
+    if(data.access_token){
+      D.strava.token=data.access_token;
+      D.strava.refresh=data.refresh_token;
+      D.strava.expires=data.expires_at;
+      sv(D);
+      updateStravaBanner();
+      await syncStrava();
+      toast('Strava connecté ✓');
+    }else{
+      toast('Code invalide — réessaie');
+    }
+  }catch(e){toast('Erreur de connexion');}
 }
 
 function disconnectStrava(){
@@ -371,19 +423,13 @@ function disconnectStrava(){
 }
 
 async function handleOAuthCallback(){
-  let code=new URLSearchParams(window.location.search).get("code");
-  if(!code){code=sessionStorage.getItem("strava_code");sessionStorage.removeItem("strava_code");}
-  if(code&&window.navigator.standalone){
-    sessionStorage.setItem("strava_code",code);
-    history.replaceState({},"","/");
-    window.location.reload();
-    return;
-  }
+  // Intercept redirect if opened in normal Safari (not PWA)
+  const code=new URLSearchParams(window.location.search).get('code');
   if(!code)return;
-  history.replaceState({},"","/");
-  toast("Connexion Strava en coursu2026");
+  history.replaceState({},'','/');
+  toast('Connexion Strava en cours…');
   try{
-    const res=await fetch(TOKEN_FN,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code,grant_type:"authorization_code"})});
+    const res=await fetch(TOKEN_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,grant_type:'authorization_code'})});
     const data=await res.json();
     if(data.access_token){
       D.strava.token=data.access_token;
@@ -392,9 +438,9 @@ async function handleOAuthCallback(){
       sv(D);
       updateStravaBanner();
       await syncStrava();
-      toast("Strava connectu00e9 u2713");
-    }else{toast("Erreur u2014 ru00e9essaie la connexion");}
-  }catch(e){toast("Erreur de connexion");}
+      toast('Strava connecté ✓');
+    }
+  }catch(e){toast('Erreur de connexion');}
 }
 
 async function ensureFreshToken(){
