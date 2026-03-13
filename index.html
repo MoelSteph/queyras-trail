@@ -312,7 +312,7 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
 
 <script>
 const RACE=new Date('2026-07-04T07:00:00');
-const START=new Date('2026-03-14T00:00:00');
+const START=new Date('2026-02-24T00:00:00');
 const TOTAL=Math.round((RACE-START)/86400000);
 const SK='qv5';
 const CLIENT_ID='211350';
@@ -371,13 +371,19 @@ function disconnectStrava(){
 }
 
 async function handleOAuthCallback(){
-  const params=new URLSearchParams(window.location.search);
-  const code=params.get('code');
+  let code=new URLSearchParams(window.location.search).get("code");
+  if(!code){code=sessionStorage.getItem("strava_code");sessionStorage.removeItem("strava_code");}
+  if(code&&window.navigator.standalone){
+    sessionStorage.setItem("strava_code",code);
+    history.replaceState({},"","/");
+    window.location.reload();
+    return;
+  }
   if(!code)return;
-  history.replaceState({},'','/');
-  toast('Connexion Strava en cours…');
+  history.replaceState({},"","/");
+  toast("Connexion Strava en coursu2026");
   try{
-    const res=await fetch(TOKEN_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,grant_type:'authorization_code'})});
+    const res=await fetch(TOKEN_FN,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({code,grant_type:"authorization_code"})});
     const data=await res.json();
     if(data.access_token){
       D.strava.token=data.access_token;
@@ -386,9 +392,9 @@ async function handleOAuthCallback(){
       sv(D);
       updateStravaBanner();
       await syncStrava();
-      toast('Strava connecté ✓');
-    }
-  }catch(e){toast('Erreur de connexion');}
+      toast("Strava connectu00e9 u2713");
+    }else{toast("Erreur u2014 ru00e9essaie la connexion");}
+  }catch(e){toast("Erreur de connexion");}
 }
 
 async function ensureFreshToken(){
