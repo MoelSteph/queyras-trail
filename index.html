@@ -1,1 +1,675 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Queyras Trail">
+<meta name="theme-color" content="#faf6f0">
+<title>Trail des Lacs du Queyras</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#faf6f0;--bg2:#f5ede0;--bg3:#efe4d2;--sf:#ffffff;
+  --b1:rgba(180,130,80,0.15);--b2:rgba(180,130,80,0.3);
+  --t:#2c1f0e;--t2:#7a5c3a;--t3:#b08d68;
+  --or:#d4631a;--orl:#faeada;--orll:#fdf3e9;
+  --am:#c8860a;--aml:#fef3d6;
+  --re:#c0392b;--rel:#fdecea;
+  --bl:#2671a8;--bll:#e8f2fb;
+  --gr:#2e7d32;--grl:#e8f5e9;
+  --cr:#f0e6d3;
+  --r:14px;--rs:9px;
+  --fd:'Playfair Display',Georgia,serif;
+  --fb:'DM Sans',system-ui,sans-serif;
+  --sb:env(safe-area-inset-bottom,0px);
+  --st:env(safe-area-inset-top,0px);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fb);background:var(--bg);color:var(--t);min-height:100dvh;-webkit-font-smoothing:antialiased;}
+button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:inherit;}
+#app{display:flex;flex-direction:column;min-height:100dvh;}
+#hdr{position:sticky;top:0;z-index:100;background:rgba(250,246,240,0.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--b2);padding:calc(12px + var(--st)) 20px 10px;}
+#hi{display:flex;align-items:center;justify-content:space-between;}
+.at{font-family:var(--fd);font-size:1.15rem;color:var(--t);}
+.as{font-size:0.65rem;color:var(--t3);margin-top:1px;letter-spacing:.06em;text-transform:uppercase;}
+.hn{font-family:var(--fd);font-size:1.6rem;color:var(--or);line-height:1;}
+.hl{font-size:.58rem;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;text-align:right;}
+#main{flex:1;overflow-y:auto;}
+#nav{position:sticky;bottom:0;z-index:100;background:rgba(250,246,240,0.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid var(--b2);display:flex;padding-bottom:var(--sb);}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px 8px;font-size:.62rem;font-weight:500;letter-spacing:.04em;color:var(--t3);text-transform:uppercase;}
+.nb.active{color:var(--or);}
+.ni{width:20px;height:20px;}
+.sec{display:none;}.sec.active{display:block;}
 
+.hero{background:var(--bg2);border-bottom:1px solid var(--b2);padding:20px 20px 18px;}
+.ht{display:flex;align-items:center;gap:18px;}
+.rw{position:relative;width:88px;height:88px;flex-shrink:0;}
+.rs{width:88px;height:88px;transform:rotate(-90deg);}
+.rt{fill:none;stroke:var(--cr);stroke-width:7;}
+.rp{fill:none;stroke:var(--or);stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1s ease;}
+.ri{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.rn{font-family:var(--fd);font-size:1.5rem;color:var(--t);line-height:1;}
+.rl{font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-top:1px;}
+.hrace{font-family:var(--fd);font-size:1.3rem;color:var(--t);line-height:1.25;font-style:italic;}
+.hdet{font-size:.72rem;color:var(--t2);margin-top:5px;line-height:1.7;}
+.hpill{display:inline-block;margin-top:8px;background:var(--orl);color:var(--or);font-size:.62rem;font-weight:500;letter-spacing:.05em;padding:4px 10px;border-radius:20px;text-transform:uppercase;border:1px solid rgba(212,99,26,.2);}
+
+.sr{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:14px 20px 0;}
+.sc{background:var(--sf);border:1px solid var(--b1);border-radius:var(--rs);padding:11px 8px;display:flex;flex-direction:column;align-items:center;gap:1px;}
+.sv{font-family:var(--fd);font-size:1.3rem;color:var(--or);line-height:1;}
+.su{font-size:.58rem;color:var(--t3);}
+.sl{font-size:.58rem;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;}
+
+.sh{padding:18px 20px 8px;}.sh h2{font-family:var(--fd);font-size:1.05rem;color:var(--t);}
+.ps{display:flex;gap:6px;padding:0 20px 14px;overflow-x:auto;scrollbar-width:none;}
+.ps::-webkit-scrollbar{display:none;}
+.pc{flex-shrink:0;background:var(--sf);border:1px solid var(--b2);border-radius:20px;padding:5px 12px;font-size:.62rem;font-weight:500;color:var(--t2);white-space:nowrap;}
+.pc.cur{background:var(--orl);border-color:rgba(212,99,26,.35);color:var(--or);}
+.pc.dn{background:var(--bg2);color:var(--t3);}
+
+.wc{margin:0 20px 9px;background:var(--sf);border:1px solid var(--b1);border-radius:var(--r);overflow:hidden;}
+.wc.cwk{border-color:rgba(212,99,26,.4);}
+.wh{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:pointer;}
+.wl{display:flex;align-items:center;gap:9px;}
+.wnum{width:30px;height:30px;border-radius:50%;background:var(--bg2);border:1px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:500;color:var(--t2);flex-shrink:0;}
+.wnum.dn{background:var(--grl);border-color:rgba(46,125,50,.3);color:var(--gr);}
+.wnum.cur{background:var(--or);color:#fff;border-color:var(--or);}
+.wti{font-size:.78rem;font-weight:500;color:var(--t);}
+.wme{font-size:.62rem;color:var(--t3);margin-top:1px;}
+.wch{font-size:.75rem;color:var(--t3);transition:transform .2s;display:inline-block;}
+.wch.open{transform:rotate(180deg);}
+.ws{border-top:1px solid var(--b1);display:none;}
+.ws.open{display:block;}
+.rb{display:flex;align-items:center;padding:7px 14px 5px;gap:8px;border-bottom:1px solid var(--b1);}
+.rht{font-size:.62rem;color:var(--t3);font-style:italic;flex:1;}
+.rbtn{background:var(--orll);border:1px solid rgba(212,99,26,.25);color:var(--or);font-size:.62rem;font-weight:500;padding:5px 12px;border-radius:20px;}
+.rbtn.on{background:var(--or);color:#fff;border-color:var(--or);}
+
+.srow{display:flex;align-items:center;gap:10px;padding:8px 14px;user-select:none;}
+.srow.dragging{opacity:.35;background:var(--orll);}
+.srow.dover{border-top:2px solid var(--or);}
+.dh{display:flex;flex-direction:column;gap:3px;padding:4px 3px;opacity:0;transition:opacity .15s;cursor:grab;flex-shrink:0;touch-action:none;}
+.dh.vis{opacity:1;}
+.dh span{display:block;width:14px;height:2px;background:var(--t3);border-radius:1px;}
+.ck{width:21px;height:21px;border-radius:50%;border:1.5px solid var(--b2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .18s;cursor:pointer;}
+.ck.dn{background:var(--gr);border-color:var(--gr);}
+.ck.dn::after{content:'✓';font-size:.65rem;color:#fff;font-weight:700;}
+.si{flex:1;min-width:0;}
+.sdy{font-size:.65rem;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;}
+.sty{font-size:.77rem;color:var(--t);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bgb{font-size:.58rem;padding:3px 8px;border-radius:9px;font-weight:500;flex-shrink:0;}
+.bc{background:var(--orll);color:#854F0B;}
+.bs{background:var(--bll);color:#0C447C;}
+.br{background:var(--bg2);color:var(--t3);}
+.bra{background:var(--aml);color:#633806;}
+
+/* strava data pill under session */
+.strava-data{display:none;padding:4px 14px 9px 55px;gap:8px;flex-wrap:wrap;}
+.strava-data.vis{display:flex;}
+.strava-pill{font-size:.65rem;padding:3px 9px;border-radius:9px;background:var(--orl);color:#854F0B;font-weight:500;border:1px solid rgba(212,99,26,.15);}
+.strava-pill.elev{background:var(--bll);color:#0C447C;}
+.strava-pill.dur{background:var(--bg2);color:var(--t2);}
+
+/* strava connect banner */
+.strava-banner{margin:14px 20px 0;background:var(--sf);border:1px solid var(--b2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.strava-banner.connected{background:var(--grl);border-color:rgba(46,125,50,.3);}
+.strava-icon{width:28px;height:28px;flex-shrink:0;}
+.strava-info{flex:1;}
+.strava-info-t{font-size:.78rem;font-weight:500;color:var(--t);}
+.strava-info-s{font-size:.62rem;color:var(--t3);margin-top:2px;}
+.strava-btn{background:var(--or);color:#fff;font-size:.72rem;font-weight:500;padding:7px 14px;border-radius:20px;flex-shrink:0;}
+.strava-btn.disc{background:var(--bg2);color:var(--t2);border:1px solid var(--b2);}
+.strava-sync{background:var(--grl);border:1px solid rgba(46,125,50,.3);color:var(--gr);font-size:.72rem;font-weight:500;padding:7px 14px;border-radius:20px;flex-shrink:0;}
+.strava-sync:disabled{opacity:.5;}
+
+/* journal */
+.jw{padding:14px 20px 24px;}
+.jt{font-family:var(--fd);font-size:1.2rem;color:var(--t);padding:6px 0 14px;font-style:italic;}
+.pc2{background:var(--sf);border:1px solid var(--b1);border-radius:var(--r);padding:15px;margin-bottom:11px;}
+.ph{font-size:.65rem;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:11px;}
+.pz{font-size:.88rem;color:var(--t);font-weight:500;margin-bottom:8px;}
+.psc{display:flex;gap:5px;margin-bottom:5px;}
+.plb{display:flex;justify-content:space-between;font-size:.58rem;color:var(--t3);margin-bottom:12px;}
+.pb2{flex:1;height:36px;border-radius:var(--rs);border:1px solid var(--b2);background:var(--bg2);font-size:.72rem;font-weight:500;color:var(--t2);}
+.p0{background:var(--grl);border-color:rgba(46,125,50,.3);color:var(--gr);}
+.p1{background:#f0faf0;border-color:rgba(46,125,50,.2);color:#4CAF50;}
+.p2{background:var(--aml);border-color:rgba(200,134,10,.3);color:var(--am);}
+.p3{background:var(--rel);border-color:rgba(192,57,43,.3);color:var(--re);}
+.jf{background:var(--sf);border:1px solid var(--b1);border-radius:var(--r);padding:15px;margin-bottom:11px;}
+.fl{font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px;display:block;}
+.ta{width:100%;background:var(--bg2);border:1px solid var(--b2);border-radius:var(--rs);color:var(--t);font-family:var(--fb);font-size:.84rem;padding:9px 11px;resize:none;line-height:1.5;outline:none;}
+.ta:focus{border-color:var(--or);}
+.savebtn{width:100%;background:var(--or);color:#fff;padding:12px;border-radius:var(--rs);font-size:.84rem;font-weight:500;margin-top:9px;}
+.savebtn:active{opacity:.85;}
+.alb{background:var(--rel);border:1px solid rgba(192,57,43,.25);border-radius:var(--r);padding:13px 15px;margin-bottom:11px;border-left:3px solid var(--re);}
+.alt{font-size:.72rem;font-weight:500;color:var(--re);margin-bottom:3px;}
+.albd{font-size:.72rem;color:#7f1d1d;line-height:1.5;}
+.eh{font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+.ec{background:var(--sf);border:1px solid var(--b1);border-radius:var(--r);padding:13px 15px;margin-bottom:8px;}
+.edt{font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px;}
+.ep{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:7px;}
+.ebg{font-size:.62rem;padding:3px 9px;border-radius:9px;font-weight:500;}
+.enote{font-size:.78rem;color:var(--t2);line-height:1.5;font-style:italic;}
+.ne{text-align:center;padding:36px 20px;color:var(--t3);font-size:.84rem;}
+
+/* stats */
+.stw{padding:0 20px 24px;}
+.brow{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;}
+.bca{background:var(--sf);border:1px solid var(--b1);border-radius:var(--r);padding:15px;}
+.bv{font-family:var(--fd);font-size:1.9rem;color:var(--or);line-height:1;}
+.bu{font-size:.65rem;color:var(--t3);}
+.bl2{font-size:.62rem;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;margin-top:5px;}
+.pbc{background:var(--sf);border:1px solid var(--b1);border-radius:var(--r);padding:15px;margin-bottom:9px;}
+.pbl{font-size:.68rem;color:var(--t2);margin-bottom:7px;display:flex;justify-content:space-between;}
+.pbt{background:var(--bg3);border-radius:4px;height:7px;overflow:hidden;}
+.pbf{height:100%;border-radius:4px;background:var(--or);transition:width .8s ease;}
+.pbf.bl{background:var(--bl);}
+.pbf.am{background:var(--am);}
+.phb{background:var(--sf);border:1px solid var(--b1);border-radius:var(--r);padding:15px;margin-bottom:9px;}
+.phr{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--b1);}
+.phr:last-child{border-bottom:none;}
+.phd{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.phn{font-size:.78rem;color:var(--t);flex:1;}
+.phw{font-size:.65rem;color:var(--t3);}
+.phbg{font-size:.62rem;padding:2px 8px;border-radius:9px;font-weight:500;}
+.ib{background:var(--orll);border:1px solid rgba(212,99,26,.2);border-radius:var(--r);padding:13px 15px;margin-bottom:9px;}
+.it{font-size:.72rem;font-weight:500;color:var(--or);margin-bottom:3px;}
+.ibd{font-size:.72rem;color:#854F0B;line-height:1.5;}
+
+/* strava recent activities */
+.act-card{background:var(--sf);border:1px solid var(--b1);border-radius:var(--r);padding:13px 15px;margin-bottom:8px;}
+.act-name{font-size:.82rem;font-weight:500;color:var(--t);margin-bottom:5px;}
+.act-pills{display:flex;gap:6px;flex-wrap:wrap;}
+.act-pill{font-size:.62rem;padding:3px 9px;border-radius:9px;font-weight:500;}
+.act-km{background:var(--orll);color:#854F0B;}
+.act-elev{background:var(--bll);color:#0C447C;}
+.act-dur{background:var(--bg2);color:var(--t2);}
+.act-date{font-size:.6rem;color:var(--t3);margin-top:5px;}
+
+.toast{position:fixed;bottom:calc(65px + var(--sb));left:50%;transform:translateX(-50%) translateY(16px);background:var(--or);color:#fff;font-size:.78rem;font-weight:500;padding:9px 18px;border-radius:20px;opacity:0;transition:all .28s;z-index:200;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.spin{display:inline-block;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<div id="app">
+<header id="hdr">
+  <div id="hi">
+    <div><div class="at">Queyras Trail</div><div class="as">Préparation · 4 juillet 2026</div></div>
+    <div style="text-align:right"><div class="hn" id="hdays">—</div><div class="hl">jours restants</div></div>
+  </div>
+</header>
+<main id="main">
+
+<!-- DASHBOARD -->
+<section class="sec active" id="sec-dash">
+  <div class="hero">
+    <div class="ht">
+      <div class="rw">
+        <svg class="rs" viewBox="0 0 88 88"><circle class="rt" cx="44" cy="44" r="37"/><circle class="rp" cx="44" cy="44" r="37" id="rprog"/></svg>
+        <div class="ri"><div class="rn" id="rdays">—</div><div class="rl">jours</div></div>
+      </div>
+      <div>
+        <div class="hrace">Trail des Lacs<br>du Queyras</div>
+        <div class="hdet">48 km · 3 300m D+<br>Objectif 10–12 h</div>
+        <div class="hpill" id="ppill">Chargement…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Strava banner -->
+  <div class="strava-banner" id="strava-banner">
+    <svg class="strava-icon" viewBox="0 0 24 24" fill="#FC4C02"><path d="M15.387 17.944l-2.089-4.116h-3.065L15.387 24l5.15-10.172h-3.066m-7.008-5.599l2.836 5.598h4.172L10.463 0l-7 13.828h4.172"/></svg>
+    <div class="strava-info">
+      <div class="strava-info-t" id="strava-info-t">Connecter Strava</div>
+      <div class="strava-info-s" id="strava-info-s">Synchronise tes activités automatiquement</div>
+    </div>
+    <button class="strava-btn" id="strava-action-btn" onclick="stravaAction()">Connecter</button>
+  </div>
+
+  <div class="sr">
+    <div class="sc"><div class="sv" id="sdone">0</div><div class="su">séances</div><div class="sl">validées</div></div>
+    <div class="sc"><div class="sv" id="skm">0</div><div class="su">km</div><div class="sl">cumulés</div></div>
+    <div class="sc"><div class="sv" id="sweek">—</div><div class="su">/ 17</div><div class="sl">semaine</div></div>
+  </div>
+  <div class="sh"><h2>Programme</h2></div>
+  <div class="ps" id="pstrip"></div>
+  <div id="wwrap" style="padding-bottom:20px"></div>
+</section>
+
+<!-- JOURNAL -->
+<section class="sec" id="sec-journal">
+  <div class="jw">
+    <div class="jt">Journal de suivi</div>
+    <div class="pc2">
+      <div class="ph">Douleur aujourd'hui</div>
+      <div class="pz">Hanche droite</div>
+      <div class="plb"><span>Aucune</span><span>Légère</span><span>Modérée</span><span>Forte</span></div>
+      <div class="psc"><button class="pb2" data-z="hanche" data-v="0">0</button><button class="pb2" data-z="hanche" data-v="1">1–3</button><button class="pb2" data-z="hanche" data-v="2">4–6</button><button class="pb2" data-z="hanche" data-v="3">7–10</button></div>
+      <div class="pz" style="margin-top:12px">Genou gauche</div>
+      <div class="plb"><span>Aucune</span><span>Légère</span><span>Modérée</span><span>Forte</span></div>
+      <div class="psc"><button class="pb2" data-z="genou" data-v="0">0</button><button class="pb2" data-z="genou" data-v="1">1–3</button><button class="pb2" data-z="genou" data-v="2">4–6</button><button class="pb2" data-z="genou" data-v="3">7–10</button></div>
+    </div>
+    <div class="jf">
+      <label class="fl">Note libre</label>
+      <textarea class="ta" id="jnote" rows="3" placeholder="Sensations, météo, remarques…"></textarea>
+      <button class="savebtn" id="savebtn">Enregistrer l'entrée</button>
+    </div>
+    <div id="palert" style="display:none" class="alb"><div class="alt">Alerte douleur</div><div class="albd" id="palertxt"></div></div>
+    <div class="eh" style="margin-top:18px">Historique</div>
+    <div id="elist"></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="sec" id="sec-stats">
+  <div class="sh" style="padding-bottom:0"><h2>Statistiques</h2></div>
+  <div class="stw" style="padding-top:14px">
+    <div class="brow">
+      <div class="bca"><div class="bv" id="stsess">0</div><div class="bu">séances</div><div class="bl2">validées / <span id="stsesst">0</span></div></div>
+      <div class="bca"><div class="bv" id="stkm">0</div><div class="bu">km</div><div class="bl2">cumulés</div></div>
+    </div>
+    <div class="brow">
+      <div class="bca"><div class="bv" id="stwks">0</div><div class="bu">semaines</div><div class="bl2">complètes</div></div>
+      <div class="bca"><div class="bv" id="stelev">0</div><div class="bu">m D+</div><div class="bl2">via Strava</div></div>
+    </div>
+    <div class="pbc"><div class="pbl"><span>Progression globale</span><span id="pb1p">0%</span></div><div class="pbt"><div class="pbf" id="pb1" style="width:0%"></div></div></div>
+    <div class="pbc"><div class="pbl"><span>Séances course</span><span id="pb2p">0%</span></div><div class="pbt"><div class="pbf bl" id="pb2" style="width:0%"></div></div></div>
+    <div class="pbc"><div class="pbl"><span>Séances salle</span><span id="pb3p">0%</span></div><div class="pbt"><div class="pbf am" id="pb3" style="width:0%"></div></div></div>
+    <div class="phb">
+      <div style="font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px">Phases</div>
+      <div class="phr"><div class="phd" style="background:var(--bl)"></div><div class="phn">Phase 1 · Base aérobie</div><div class="phw">S1–S4</div><div class="phbg" id="ph1s" style="background:var(--bll);color:#0C447C">—</div></div>
+      <div class="phr"><div class="phd" style="background:var(--or)"></div><div class="phn">Phase 2 · Trail spécifique</div><div class="phw">S5–S10</div><div class="phbg" id="ph2s" style="background:var(--orll);color:#854F0B">—</div></div>
+      <div class="phr"><div class="phd" style="background:var(--am)"></div><div class="phn">Phase 3 · Pic de forme</div><div class="phw">S11–S14</div><div class="phbg" id="ph3s" style="background:var(--aml);color:#633806">—</div></div>
+      <div class="phr"><div class="phd" style="background:var(--re)"></div><div class="phn">Phase 4 · Affûtage</div><div class="phw">S15–S17</div><div class="phbg" id="ph4s" style="background:var(--rel);color:#7f1d1d">—</div></div>
+    </div>
+    <div class="sh" style="padding:0 0 10px"><h2>Activités Strava récentes</h2></div>
+    <div id="strava-acts"><div class="ne">Connecte Strava pour voir tes activités</div></div>
+    <div class="ib"><div class="it">Rappel kiné</div><div class="ibd">Douleur hanche > 3/10 en cours d'effort → marche immédiate. Consultation avant chaque changement de phase.</div></div>
+  </div>
+</section>
+
+</main>
+<nav id="nav">
+  <button class="nb active" data-s="dash">
+    <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Accueil
+  </button>
+  <button class="nb" data-s="journal">
+    <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+    Journal
+  </button>
+  <button class="nb" data-s="stats">
+    <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    Stats
+  </button>
+</nav>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const RACE=new Date('2026-07-04T07:00:00');
+const START=new Date('2026-03-14T00:00:00');
+const TOTAL=Math.round((RACE-START)/86400000);
+const SK='qv5';
+const CLIENT_ID='211350';
+const REDIRECT='https://stupendous-cocada-62e7d6.netlify.app';
+const TOKEN_FN='/.netlify/functions/strava-token';
+
+const BW=[
+  {n:1,ph:'Phase 1',lb:'Base aérobie',km:42,ss:[{d:'Lun',t:'Repos',dt:'Récupération + exercices kiné',b:'r',k:0},{d:'Mar',t:'Course · Footing Z2',dt:'Footing Z2 plat + 6×100m côtes',b:'c',k:10},{d:'Mer',t:'Salle A · Jambes',dt:'Renforcement jambes + circuit haut',b:'s',k:0},{d:'Jeu',t:'Course · Z2 + côtes',dt:'Footing Z2 + 6×100m montées',b:'c',k:10},{d:'Ven',t:'Salle B · Haut corps',dt:'Circuit haut + rappel jambes',b:'s',k:0},{d:'Sam',t:'Course · Sortie longue',dt:'Sortie longue Z1/Z2 – bois',b:'c',k:22},{d:'Dim',t:'Repos',dt:'Repos ou marche 30 min',b:'r',k:0}]},
+  {n:2,ph:'Phase 1',lb:'Base aérobie',km:45,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Côtes/tapis',dt:'Footing + 8×100m tapis incliné 10%',b:'c',k:11},{d:'Mer',t:'Salle A · Jambes',dt:'Renforcement jambes + circuit haut',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 aisé',b:'c',k:10},{d:'Ven',t:'Salle B · Haut corps',dt:'Circuit haut + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Sortie longue',dt:'Sortie longue Z1/Z2 – 2h30',b:'c',k:24},{d:'Dim',t:'Repos',dt:'Repos ou marche 40 min',b:'r',k:0}]},
+  {n:3,ph:'Phase 1',lb:'Base aérobie',km:48,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Z2 + côtes',dt:'Footing + 10×100m côtes',b:'c',k:12},{d:'Mer',t:'Salle A · Jambes',dt:'Renforcement jambes + circuit haut',b:'s',k:0},{d:'Jeu',t:'Course · Z2 + strides',dt:'Footing Z2 + 5×80m strides',b:'c',k:11},{d:'Ven',t:'Salle B · Complet',dt:'Circuit complet + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Sortie longue',dt:'Sortie longue Z1/Z2 + 45 min Z3',b:'c',k:25},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
+  {n:4,ph:'Phase 1',lb:'Récupération',km:32,ss:[{d:'Lun',t:'Repos',dt:'Repos + bilan kiné',b:'r',k:0},{d:'Mar',t:'Course · Z1 léger',dt:'Footing Z1 très léger',b:'c',k:8},{d:'Mer',t:'Salle A · Léger',dt:'Renforcement léger + mobilité',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 aisé',b:'c',k:10},{d:'Ven',t:'Salle B · Léger',dt:'Haut corps + étirements',b:'s',k:0},{d:'Sam',t:'Course · Sortie',dt:'Sortie longue modérée Z1/Z2',b:'c',k:14},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
+  {n:5,ph:'Phase 2',lb:'Trail spécifique',km:48,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Fractionné',dt:'3×8 min montée Z3/Z4 – escaliers',b:'c',k:11},{d:'Mer',t:'Salle A · Trail',dt:'Step-up, fentes lestées, mollets',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 récupérateur',b:'c',k:12},{d:'Ven',t:'Salle B · Haut corps',dt:'Circuit haut + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Trail long',dt:'Fontainebleau / Chevreuse – 2h45',b:'c',k:25},{d:'Dim',t:'Repos',dt:'Repos ou marche 45 min',b:'r',k:0}]},
+  {n:6,ph:'Phase 2',lb:'Trail spécifique',km:52,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Fractionné',dt:'4×8 min + 2×4 min Z4',b:'c',k:12},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement trail + circuit haut',b:'s',k:0},{d:'Jeu',t:'Course · Z2/Z3',dt:'Footing Z2 + 2×15 min Z3',b:'c',k:13},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Trail long',dt:'Fontainebleau / Vexin – 3h15',b:'c',k:27},{d:'Dim',t:'Repos',dt:'Repos ou marche 45 min',b:'r',k:0}]},
+  {n:7,ph:'Phase 2',lb:'Trail spécifique',km:50,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Côtes',dt:'Footing Z2 + 5×200m côtes Z4',b:'c',k:12},{d:'Mer',t:'Salle A · Trail',dt:'Single-leg DL, box jump, mollets',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 + marche 15 min finale',b:'c',k:11},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Bâtons',dt:'Sortie Z1/Z2 initiation bâtons – 3h',b:'c',k:27},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
+  {n:8,ph:'Phase 2',lb:'Récupération',km:34,ss:[{d:'Lun',t:'Repos',dt:'Repos + bilan kiné',b:'r',k:0},{d:'Mar',t:'Course · Z1',dt:'Footing Z1 très léger',b:'c',k:9},{d:'Mer',t:'Salle A · Léger',dt:'Renforcement léger + mobilité',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 aisé',b:'c',k:11},{d:'Ven',t:'Salle B · Léger',dt:'Haut corps + étirements',b:'s',k:0},{d:'Sam',t:'Course · Sortie',dt:'Sortie longue tranquille Z1/Z2',b:'c',k:14},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
+  {n:9,ph:'Phase 2',lb:'Trail spécifique',km:55,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Escaliers',dt:'5×10 min Z3/Z4 – escaliers',b:'c',k:13},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement trail complet',b:'s',k:0},{d:'Jeu',t:'Course · Z2/Z3',dt:'Footing Z2 + 2×20 min Z3',b:'c',k:14},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Grande sortie',dt:'Fontainebleau / montagne – 3h30',b:'c',k:28},{d:'Dim',t:'Repos',dt:'Marche 1h avec bâtons',b:'r',k:0}]},
+  {n:10,ph:'Phase 2',lb:'Trail spécifique',km:58,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Côtes',dt:'6×3 min Z4 (côte 6–8%)',b:'c',k:13},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement trail (charge prog.)',b:'s',k:0},{d:'Jeu',t:'Course · Z2/Z3',dt:'Footing Z2 + 30 min Z3',b:'c',k:15},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Montagne',dt:'Trail montagne bâtons – 3h45',b:'c',k:30},{d:'Dim',t:'Repos',dt:'Marche 1h active',b:'r',k:0}]},
+  {n:11,ph:'Phase 3',lb:'Pic de forme',km:60,ss:[{d:'Lun',t:'Repos',dt:'Repos + kiné',b:'r',k:0},{d:'Mar',t:'Course · Qualité',dt:'3×(2km Z3 + 1km Z4) tapis incliné',b:'c',k:14},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement trail complet',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 récupérateur',b:'c',k:12},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · CLÉ',dt:'Chartreuse / Belledonne – 4h30',b:'c',k:34},{d:'Dim',t:'Repos',dt:'Marche 1h bâtons',b:'r',k:0}]},
+  {n:12,ph:'Phase 3',lb:'Pic de forme',km:62,ss:[{d:'Lun',t:'Repos',dt:'Repos + kiné',b:'r',k:0},{d:'Mar',t:'Course · Escaliers',dt:'4×12 min Z3/Z4, récup 3 min',b:'c',k:14},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement trail (charge maintenue)',b:'s',k:0},{d:'Jeu',t:'Course · Z2/Z3',dt:'Footing Z2 + 2×20 min Z3',b:'c',k:16},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · CLÉ',dt:'Préalpes / Vercors bâtons – 4h30',b:'c',k:32},{d:'Dim',t:'Repos',dt:'Marche 1h + bâtons',b:'r',k:0}]},
+  {n:13,ph:'Phase 3',lb:'Pic de forme',km:58,ss:[{d:'Lun',t:'Repos',dt:'Repos + kiné',b:'r',k:0},{d:'Mar',t:'Course · Mixte',dt:'6×(3 min Z4 + 2 min Z3)',b:'c',k:14},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement (maintien)',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 aisé',b:'c',k:12},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Descentes',dt:'Trail focus descentes – 4h',b:'c',k:32},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
+  {n:14,ph:'Phase 3',lb:'Récupération',km:38,ss:[{d:'Lun',t:'Repos',dt:'Repos + bilan kiné OBLIGATOIRE',b:'r',k:0},{d:'Mar',t:'Course · Z1',dt:'Footing Z1 très léger',b:'c',k:10},{d:'Mer',t:'Salle A · Léger',dt:'Renforcement léger + mobilité complète',b:'s',k:0},{d:'Jeu',t:'Course · Z2 + vivacité',dt:'Footing Z2 + 4×1 min Z4',b:'c',k:12},{d:'Ven',t:'Salle B · Léger',dt:'Haut corps + étirements + kiné',b:'s',k:0},{d:'Sam',t:'Course · Sortie',dt:'Sortie longue modérée Z1/Z2',b:'c',k:16},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
+  {n:15,ph:'Phase 4',lb:'Affûtage',km:44,ss:[{d:'Lun',t:'Repos',dt:'Repos + kiné maintenance',b:'r',k:0},{d:'Mar',t:'Course · Z2 + vivacité',dt:'Footing Z2 + 3×5 min Z4',b:'c',k:13},{d:'Mer',t:'Salle A · Allégé',dt:'Renforcement allégé + haut corps',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 aisé',b:'c',k:11},{d:'Ven',t:'Salle B · Léger',dt:'Haut corps léger + kiné',b:'s',k:0},{d:'Sam',t:'Course · Trail',dt:'Sortie trail Z1/Z2 – technique descente',b:'c',k:20},{d:'Dim',t:'Repos',dt:'Repos ou marche',b:'r',k:0}]},
+  {n:16,ph:'Phase 4',lb:'Affûtage',km:32,ss:[{d:'Lun',t:'Repos',dt:'Repos + kiné maintenance',b:'r',k:0},{d:'Mar',t:'Course · Z2 + vivacité',dt:'Footing Z2 + 3×3 min Z4',b:'c',k:10},{d:'Mer',t:'Salle A · Très léger',dt:'Renforcement très léger + mobilité',b:'s',k:0},{d:'Jeu',t:'Course · Z1',dt:'Footing Z1 récupérateur',b:'c',k:9},{d:'Ven',t:'Salle B · Mobilité',dt:'Mobilité + kiné uniquement',b:'s',k:0},{d:'Sam',t:'Course · Court',dt:'Sortie courte Z1/Z2 – frais',b:'c',k:13},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
+  {n:17,ph:'Phase 4',lb:'Semaine de course',km:10,ss:[{d:'Lun',t:'Repos',dt:'Repos – préparer sac et matériel',b:'r',k:0},{d:'Mar',t:'Course · Ouverture',dt:'20 min Z1 + 3×30 sec Z4',b:'c',k:5},{d:'Mer',t:'Repos',dt:'Repos – alimentation glucidique',b:'r',k:0},{d:'Jeu',t:'Course · Léger',dt:'15 min Z1 – rester léger',b:'c',k:5},{d:'Ven',t:'Repos',dt:'Départ Queyras – récupération',b:'r',k:0},{d:'Sam',t:'Repos',dt:'Arrivée – retrait dossard',b:'r',k:0},{d:'Dim',t:'COURSE',dt:'TRAIL DES LACS DU QUEYRAS – 48 km / 3 300m D+',b:'ra',k:48}]},
+];
+
+function ld(){try{return JSON.parse(localStorage.getItem(SK))||{};}catch(e){return{};}}
+function sv(d){try{localStorage.setItem(SK,JSON.stringify(d));}catch(e){}}
+let D=ld();
+if(!D.sess)D.sess={};
+if(!D.entries)D.entries=[];
+if(!D.pain)D.pain={hanche:-1,genou:-1};
+if(!D.ord)D.ord={};
+if(!D.strava)D.strava={token:null,refresh:null,expires:0,acts:[]};
+
+function daysLeft(){return Math.max(0,Math.ceil((RACE-new Date())/86400000));}
+function curWeek(){const e=Math.floor((new Date()-START)/86400000);if(e<0)return 1;return Math.min(Math.floor(e/7)+1,17);}
+function sk2(w,i){return 'w'+w+'s'+i;}
+function fmtDur(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h>0?h+'h'+String(m).padStart(2,'0'):m+'min';}
+function fmtKm(m){return (m/1000).toFixed(1)+' km';}
+
+// ── STRAVA AUTH ──
+function stravaAction(){
+  if(D.strava.token){disconnectStrava();return;}
+  const scope='activity:read_all';
+  const url=`https://www.strava.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT)}&response_type=code&scope=${scope}`;
+  window.location.href=url;
+}
+
+function disconnectStrava(){
+  D.strava={token:null,refresh:null,expires:0,acts:[]};sv(D);
+  updateStravaBanner();rdash();
+  document.getElementById('strava-acts').innerHTML='<div class="ne">Connecte Strava pour voir tes activités</div>';
+  document.getElementById('stelev').textContent='0';
+  toast('Strava déconnecté');
+}
+
+async function handleOAuthCallback(){
+  const params=new URLSearchParams(window.location.search);
+  const code=params.get('code');
+  if(!code)return;
+  history.replaceState({},'','/');
+  toast('Connexion Strava en cours…');
+  try{
+    const res=await fetch(TOKEN_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,grant_type:'authorization_code'})});
+    const data=await res.json();
+    if(data.access_token){
+      D.strava.token=data.access_token;
+      D.strava.refresh=data.refresh_token;
+      D.strava.expires=data.expires_at;
+      sv(D);
+      updateStravaBanner();
+      await syncStrava();
+      toast('Strava connecté ✓');
+    }
+  }catch(e){toast('Erreur de connexion');}
+}
+
+async function ensureFreshToken(){
+  if(!D.strava.refresh)return false;
+  if(Date.now()/1000 < D.strava.expires-60)return true;
+  try{
+    const res=await fetch(TOKEN_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({refresh_token:D.strava.refresh,grant_type:'refresh_token'})});
+    const data=await res.json();
+    if(data.access_token){
+      D.strava.token=data.access_token;
+      D.strava.refresh=data.refresh_token;
+      D.strava.expires=data.expires_at;
+      sv(D);return true;
+    }
+  }catch(e){}
+  return false;
+}
+
+async function syncStrava(){
+  const btn=document.getElementById('strava-action-btn');
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spin">↻</span>';}
+  const ok=await ensureFreshToken();
+  if(!ok){if(btn){btn.disabled=false;btn.textContent='Sync';}return;}
+  try{
+    // fetch last 60 activities from start of training
+    const since=Math.floor(START.getTime()/1000);
+    const res=await fetch(`https://www.strava.com/api/v3/athlete/activities?after=${since}&per_page=60`,{headers:{Authorization:'Bearer '+D.strava.token}});
+    const acts=await res.json();
+    if(Array.isArray(acts)){
+      D.strava.acts=acts.map(a=>({
+        id:a.id,name:a.name,
+        type:a.sport_type||a.type,
+        date:a.start_date_local,
+        km:a.distance,
+        elev:a.total_elevation_gain,
+        dur:a.moving_time,
+      }));
+      sv(D);
+      autoMatchActivities();
+      renderStravaActs();
+      updateStravaStats();
+    }
+  }catch(e){toast('Erreur sync Strava');}
+  if(btn){btn.disabled=false;btn.textContent='Sync';}
+}
+
+function autoMatchActivities(){
+  // For each strava run/trail activity, try to match it to a session in the same week
+  D.strava.acts.forEach(a=>{
+    if(!['Run','TrailRun','Hike','Walk'].includes(a.type))return;
+    const actDate=new Date(a.date);
+    const dayIdx=Math.floor((actDate-START)/86400000);
+    if(dayIdx<0)return;
+    const wNum=Math.min(Math.floor(dayIdx/7)+1,17);
+    const w=BW.find(x=>x.n===wNum);if(!w)return;
+    // find first unvalidated course session this week
+    const ss=gws(wNum);
+    for(const s of ss){
+      if(s.b!=='c')continue;
+      const key=sk2(wNum,s.oi);
+      if(!D.sess[key]){
+        D.sess[key]=true;
+        // store strava data for this session
+        if(!D.stravaMatch)D.stravaMatch={};
+        D.stravaMatch[key]={km:a.km,elev:a.elev,dur:a.dur,name:a.name};
+        break;
+      }
+    }
+  });
+  sv(D);
+}
+
+function updateStravaBanner(){
+  const banner=document.getElementById('strava-banner');
+  const t=document.getElementById('strava-info-t');
+  const s=document.getElementById('strava-info-s');
+  const btn=document.getElementById('strava-action-btn');
+  if(D.strava.token){
+    banner.classList.add('connected');
+    t.textContent='Strava connecté';
+    s.textContent='Dernière sync : '+(D.strava.acts.length?new Date(D.strava.acts[0].date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):'jamais');
+    btn.className='strava-sync';btn.textContent='Sync';
+  }else{
+    banner.classList.remove('connected');
+    t.textContent='Connecter Strava';
+    s.textContent='Synchronise tes activités automatiquement';
+    btn.className='strava-btn';btn.textContent='Connecter';
+  }
+}
+
+function renderStravaActs(){
+  const el=document.getElementById('strava-acts');
+  if(!D.strava.acts||!D.strava.acts.length){el.innerHTML='<div class="ne">Aucune activité trouvée depuis le début du programme</div>';return;}
+  const runs=D.strava.acts.filter(a=>['Run','TrailRun','Hike'].includes(a.type)).slice(0,10);
+  if(!runs.length){el.innerHTML='<div class="ne">Aucune course trouvée</div>';return;}
+  el.innerHTML=runs.map(a=>{
+    const typeIcon=a.type==='TrailRun'?'🏔':'🏃';
+    return '<div class="act-card"><div class="act-name">'+typeIcon+' '+a.name+'</div><div class="act-pills"><span class="act-pill act-km">'+fmtKm(a.km)+'</span><span class="act-pill act-elev">+'+Math.round(a.elev)+' m</span><span class="act-pill act-dur">'+fmtDur(a.dur)+'</span></div><div class="act-date">'+new Date(a.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+'</div></div>';
+  }).join('');
+}
+
+function updateStravaStats(){
+  const runs=D.strava.acts.filter(a=>['Run','TrailRun','Hike'].includes(a.type));
+  const totalElev=runs.reduce((s,a)=>s+a.elev,0);
+  document.getElementById('stelev').textContent=Math.round(totalElev);
+}
+
+function gws(wn){
+  const base=BW.find(w=>w.n===wn);if(!base)return[];
+  const ord=D.ord[wn];
+  if(!ord)return base.ss.map((s,i)=>({...s,oi:i}));
+  return ord.map(oi=>({...base.ss[oi],oi}));
+}
+
+function gst(){
+  let tot=0,dn=0,km=0,cd=0,ct=0,sd=0,st2=0,wd=0;
+  BW.forEach(w=>{let wdd=0,wt=0;w.ss.forEach((s,i)=>{if(s.b==='r')return;tot++;wt++;if(D.sess[sk2(w.n,i)]){dn++;wdd++;km+=s.k;if(s.b==='c')cd++;if(s.b==='s')sd++;}if(s.b==='c')ct++;if(s.b==='s')st2++;});if(wdd>0&&wdd===wt)wd++;});
+  return{tot,dn,km,cd,ct,sd,st2,wd};
+}
+
+function rdash(){
+  const d=daysLeft(),c=curWeek(),pct=Math.max(0,Math.min(1,1-d/TOTAL));
+  document.getElementById('rdays').textContent=d;
+  document.getElementById('hdays').textContent=d;
+  const r=37,ci=2*Math.PI*r,rp=document.getElementById('rprog');
+  rp.style.strokeDasharray=ci;rp.style.strokeDashoffset=ci*(1-pct);
+  const phs=['Base aérobie S1–S4','Trail spécifique S5–S10','Pic de forme S11–S14','Affûtage S15–S17'];
+  document.getElementById('ppill').textContent=phs[c<=4?0:c<=10?1:c<=14?2:3];
+  const st=gst();
+  document.getElementById('sdone').textContent=st.dn;
+  document.getElementById('skm').textContent=st.km;
+  document.getElementById('sweek').textContent=c;
+  updateStravaBanner();
+  const strip=document.getElementById('pstrip');strip.innerHTML='';
+  [['S1–S4','Base aérobie',1,4],['S5–S10','Trail spécifique',5,10],['S11–S14','Pic de forme',11,14],['S15–S17','Affûtage',15,17]].forEach(([r2,n,a,b])=>{
+    const ch=document.createElement('div');ch.className='pc';ch.textContent=n+' · '+r2;
+    if(c>=a&&c<=b)ch.classList.add('cur');else if(c>b)ch.classList.add('dn');
+    strip.appendChild(ch);
+  });
+  const wrap=document.getElementById('wwrap');wrap.innerHTML='';
+  BW.forEach(w=>{
+    const ic=w.n===c;const ss=gws(w.n);
+    let wdd=0,wt=0;ss.forEach(s=>{if(s.b==='r')return;wt++;if(D.sess[sk2(w.n,s.oi)])wdd++;});
+    const wp=wt>0?Math.round(wdd/wt*100):0;
+    const isd=wt>0&&wdd===wt;
+    const nc=isd?'dn':ic?'cur':'';const nt=isd?'✓':w.n;
+    const card=document.createElement('div');card.className='wc'+(ic?' cwk':'');
+    const sl=ss.map(s=>{
+      const done2=!!D.sess[sk2(w.n,s.oi)];
+      const bl=s.b==='c'?'bc':s.b==='s'?'bs':s.b==='ra'?'bra':'br';
+      const bt=s.b==='c'?'Course':s.b==='s'?'Salle':s.b==='ra'?'Race':'Repos';
+      const key=sk2(w.n,s.oi);
+      const sm=D.stravaMatch&&D.stravaMatch[key];
+      const stravaHtml=sm?'<div class="strava-data vis"><span class="strava-pill">'+fmtKm(sm.km)+'</span><span class="strava-pill elev">+'+Math.round(sm.elev)+' m</span><span class="strava-pill dur">'+fmtDur(sm.dur)+'</span><span style="font-size:.58rem;color:var(--t3);align-self:center;">'+sm.name+'</span></div>':'';
+      return '<div class="srow" data-wn="'+w.n+'" data-oi="'+s.oi+'" draggable="false"><div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div><div class="ck'+(done2?' dn':'')+'" onclick="tgs('+w.n+','+s.oi+',this)"></div><div class="si"><div class="sdy">'+s.d+'</div><div class="sty">'+s.t+'</div></div><div class="bgb '+bl+'">'+bt+'</div></div>'+stravaHtml;
+    }).join('');
+    card.innerHTML='<div class="wh" onclick="tgw(this)"><div class="wl"><div class="wnum '+nc+'">'+nt+'</div><div><div class="wti">Semaine '+w.n+' · '+w.lb+'</div><div class="wme">'+w.ph+' · '+w.km+' km · '+wp+'% validé</div></div></div><div class="wch'+(ic?' open':'')+'">▾</div></div><div class="ws'+(ic?' open':'')+'"><div class="rb"><span class="rht">Appuie sur les 3 traits pour déplacer</span><button class="rbtn" onclick="tgr(this,'+w.n+')" data-wn="'+w.n+'">Réagencer</button></div><div class="sl2" data-wn="'+w.n+'">'+sl+'</div></div>';
+    wrap.appendChild(card);
+  });
+  initDrag();
+}
+
+function tgw(h){const s=h.nextElementSibling,ch=h.querySelector('.wch');s.classList.toggle('open');ch.classList.toggle('open');}
+
+function tgs(wn,oi,el){
+  const key=sk2(wn,oi);D.sess[key]=!D.sess[key];if(!D.sess[key])delete D.sess[key];sv(D);
+  el.classList.toggle('dn',!!D.sess[key]);
+  const w=BW.find(x=>x.n===wn),s=w&&w.ss[oi];
+  if(D.sess[key])toast(s&&s.k>0?'+'+s.k+' km ✓':'Séance validée ✓');
+  const st=gst();document.getElementById('sdone').textContent=st.dn;document.getElementById('skm').textContent=st.km;
+}
+
+function tgr(btn,wn){
+  const list=document.querySelector('.sl2[data-wn="'+wn+'"]');
+  const on=btn.classList.toggle('on');
+  btn.textContent=on?'Terminer':'Réagencer';
+  list.querySelectorAll('.dh').forEach(h=>h.classList.toggle('vis',on));
+  list.querySelectorAll('.srow').forEach(r=>r.setAttribute('draggable',on?'true':'false'));
+}
+
+let ds=null;
+function initDrag(){
+  document.querySelectorAll('.sl2').forEach(list=>{
+    list.addEventListener('dragstart',e=>{const r=e.target.closest('.srow');if(!r)return;ds=r;r.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+    list.addEventListener('dragend',()=>{if(ds)ds.classList.remove('dragging');list.querySelectorAll('.srow').forEach(r=>r.classList.remove('dover'));ds=null;});
+    list.addEventListener('dragover',e=>{e.preventDefault();const r=e.target.closest('.srow');if(!r||r===ds)return;list.querySelectorAll('.srow').forEach(x=>x.classList.remove('dover'));r.classList.add('dover');});
+    list.addEventListener('drop',e=>{
+      e.preventDefault();const tgt=e.target.closest('.srow');if(!tgt||tgt===ds||!ds)return;
+      const wn=parseInt(list.dataset.wn);const rows=[...list.querySelectorAll('.srow')];
+      const si=rows.indexOf(ds),ti=rows.indexOf(tgt);rows.splice(si,1);rows.splice(ti,0,ds);
+      rows.forEach(r=>list.appendChild(r));list.querySelectorAll('.srow').forEach(r=>r.classList.remove('dover'));
+      D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));sv(D);toast('Ordre sauvegardé');
+    });
+  });
+  document.querySelectorAll('.sl2').forEach(list=>{
+    let td=null,tc=null;
+    list.addEventListener('touchstart',e=>{
+      const h=e.target.closest('.dh');if(!h||!h.classList.contains('vis'))return;
+      const row=h.closest('.srow');if(!row)return;td=row;
+      tc=row.cloneNode(true);tc.style.cssText='position:fixed;pointer-events:none;opacity:.8;z-index:999;width:'+row.offsetWidth+'px;background:var(--orll);border-radius:var(--rs);';
+      document.body.appendChild(tc);row.classList.add('dragging');
+    },{passive:true});
+    list.addEventListener('touchmove',e=>{
+      if(!td||!tc)return;e.preventDefault();
+      const t=e.touches[0];tc.style.left=(t.clientX-tc.offsetWidth/2)+'px';tc.style.top=(t.clientY-30)+'px';
+      const el=document.elementFromPoint(t.clientX,t.clientY);const ov=el&&el.closest('.srow');
+      list.querySelectorAll('.srow').forEach(r=>r.classList.remove('dover'));
+      if(ov&&ov!==td)ov.classList.add('dover');
+    },{passive:false});
+    list.addEventListener('touchend',e=>{
+      if(!td)return;if(tc){tc.remove();tc=null;}td.classList.remove('dragging');
+      const t=e.changedTouches[0];const el=document.elementFromPoint(t.clientX,t.clientY);
+      const tgt=el&&el.closest('.srow');list.querySelectorAll('.srow').forEach(r=>r.classList.remove('dover'));
+      if(tgt&&tgt!==td){
+        const wn=parseInt(list.dataset.wn);const rows=[...list.querySelectorAll('.srow')];
+        const si=rows.indexOf(td),ti=rows.indexOf(tgt);rows.splice(si,1);rows.splice(ti,0,td);
+        rows.forEach(r=>list.appendChild(r));D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));sv(D);toast('Ordre sauvegardé');
+      }
+      td=null;
+    });
+  });
+}
+
+function rjournal(){
+  document.querySelectorAll('.pb2').forEach(btn=>{btn.className='pb2';const z=btn.dataset.z,v=parseInt(btn.dataset.v);if(D.pain[z]===v)btn.classList.add('p'+v);});
+  ralert();rentries();
+}
+function ralert(){
+  const a=document.getElementById('palert'),t=document.getElementById('palertxt');
+  const h=D.pain.hanche,g=D.pain.genou;
+  if(h>=2||g>=2){a.style.display='block';let m=[];
+    if(h>=3)m.push('Douleur forte à la hanche (7–10/10) : arrêt et consultation kiné sous 48h.');
+    else if(h===2)m.push('Douleur modérée à la hanche (4–6/10) : marche lors de la prochaine séance, avertir le kiné.');
+    if(g>=3)m.push('Douleur forte au genou (7–10/10) : arrêt immédiat, consultation kiné.');
+    else if(g===2)m.push('Douleur modérée au genou (4–6/10) : surveiller en descente.');
+    t.textContent=m.join(' ');}else{a.style.display='none';}
+}
+function rentries(){
+  const l=document.getElementById('elist');
+  if(!D.entries.length){l.innerHTML='<div class="ne">Aucune entrée pour l\'instant.<br>Enregistre ta première note !</div>';return;}
+  const lb=['Aucune','Légère','Modérée','Forte'],col=['#2e7d32','#4CAF50','#c8860a','#c0392b'],bg=['#e8f5e9','#f0faf0','#fef3d6','#fdecea'];
+  l.innerHTML=[...D.entries].reverse().slice(0,20).map(e=>{
+    const h=e.pain.hanche,g=e.pain.genou;
+    return '<div class="ec"><div class="edt">'+new Date(e.date).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})+'</div><div class="ep"><span class="ebg" style="background:'+(h>=0?bg[h]:'#f5ede0')+';color:'+(h>=0?col[h]:'#b08d68')+'">Hanche · '+(h>=0?lb[h]:'—')+'</span><span class="ebg" style="background:'+(g>=0?bg[g]:'#f5ede0')+';color:'+(g>=0?col[g]:'#b08d68')+'">Genou · '+(g>=0?lb[g]:'—')+'</span></div>'+(e.note?'<div class="enote">'+e.note+'</div>':'')+'</div>';
+  }).join('');
+}
+
+function rstats(){
+  const st=gst();
+  document.getElementById('stsess').textContent=st.dn;document.getElementById('stsesst').textContent=st.tot;
+  document.getElementById('stkm').textContent=st.km;document.getElementById('stwks').textContent=st.wd;
+  const g=st.tot>0?Math.round(st.dn/st.tot*100):0,c=st.ct>0?Math.round(st.cd/st.ct*100):0,s=st.st2>0?Math.round(st.sd/st.st2*100):0;
+  [['pb1',g],['pb2',c],['pb3',s]].forEach(([id,p])=>{document.getElementById(id).style.width=p+'%';document.getElementById(id+'p').textContent=p+'%';});
+  const cwn=curWeek();const ps=(a,b)=>cwn<a?'À venir':cwn>b?'Terminée':'S'+cwn;
+  ['ph1s','ph2s','ph3s','ph4s'].forEach((id,i)=>{const[a,b]=[[1,4],[5,10],[11,14],[15,17]][i];document.getElementById(id).textContent=ps(a,b);});
+  updateStravaStats();
+  renderStravaActs();
+}
+
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+document.querySelectorAll('.nb').forEach(btn=>{btn.addEventListener('click',()=>{
+  const s=btn.dataset.s;
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.sec').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');document.getElementById('sec-'+s).classList.add('active');
+  if(s==='stats')rstats();if(s==='journal')rjournal();if(s==='dash')rdash();
+});});
+
+document.querySelectorAll('.pb2').forEach(btn=>{btn.addEventListener('click',()=>{const z=btn.dataset.z,v=parseInt(btn.dataset.v);D.pain[z]=D.pain[z]===v?-1:v;sv(D);rjournal();});});
+
+document.getElementById('savebtn').addEventListener('click',()=>{
+  const note=document.getElementById('jnote').value.trim();
+  D.entries.push({date:new Date().toISOString(),pain:{hanche:D.pain.hanche,genou:D.pain.genou},note});
+  D.pain={hanche:-1,genou:-1};sv(D);document.getElementById('jnote').value='';rjournal();toast('Entrée enregistrée ✓');
+});
+
+// Init
+handleOAuthCallback();
+rdash();rstats();
+if(D.strava.token){renderStravaActs();updateStravaStats();}
+</script>
+</body>
+</html>
