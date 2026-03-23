@@ -734,7 +734,10 @@ function buildWeekCard(w,c,expanded){
   const hasBadge=ws.sick||ws.injured;
   const badgeRow=hasBadge?'<div class="wst">'+sickBadge+injBadge+'</div>':'';
   const noteRow=ws.note?'<div class="wst-note">'+ws.note+'</div>':'';
-  card.innerHTML='<div class="wh" onclick="tgw(this)"><div class="wl"><div class="wnum '+nc+'">'+nt+'</div><div><div class="wti">Semaine '+w.n+' · '+w.lb+'</div><div class="wme">'+w.ph+' · '+w.km+' km · '+wp+'% validé</div>'+badgeRow+noteRow+'</div></div><div style="display:flex;align-items:center;gap:6px;"><button onclick="event.stopPropagation();openStatusModal('+w.n+')" style="width:26px;height:26px;border-radius:50%;background:var(--bg2);border:1px solid var(--b2);font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;"'+(hasBadge?' style="background:var(--rel);border-color:rgba(192,57,43,.3);"':'')+'>'+(hasBadge?'⚠':'＋')+'</button><div class="wch'+(isOpen?' open':'')+'">▾</div></div></div><div class="ws'+(isOpen?' open':'')+'"><div class="rb"><span class="rht">Appuie sur les 3 traits pour déplacer</span><button class="rbtn" onclick="tgr(this,'+w.n+')" data-wn="'+w.n+'">Réagencer</button></div><div class="sl2" data-wn="'+w.n+'">'+sl+'</div></div>';
+  const btnBg=hasBadge?'var(--rel)':'var(--bg2)';
+  const btnBorder=hasBadge?'rgba(192,57,43,.3)':'var(--b2)';
+  const btnIcon=hasBadge?'⚠':'＋';
+  card.innerHTML='<div class="wh" onclick="tgw(this)"><div class="wl"><div class="wnum '+nc+'">'+nt+'</div><div><div class="wti">Semaine '+w.n+' · '+w.lb+'</div><div class="wme">'+w.ph+' · '+w.km+' km · '+wp+'% validé</div>'+badgeRow+noteRow+'</div></div><div style="display:flex;align-items:center;gap:6px;"><button onclick="event.stopPropagation();openStatusModal('+w.n+')" style="width:26px;height:26px;border-radius:50%;background:'+btnBg+';border:1px solid '+btnBorder+';font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+btnIcon+'</button><div class="wch'+(isOpen?' open':'')+'">▾</div></div></div><div class="ws'+(isOpen?' open':'')+'"><div class="rb"><span class="rht">Appuie sur les 3 traits pour déplacer</span><button class="rbtn" onclick="tgr(this,'+w.n+')" data-wn="'+w.n+'">Réagencer</button></div><div class="sl2" data-wn="'+w.n+'">'+sl+'</div></div>';
   return card;
 }
 
