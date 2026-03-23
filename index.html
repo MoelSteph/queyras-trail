@@ -112,7 +112,7 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
 .ck.dn{background:var(--gr);border-color:var(--gr);}
 .ck.dn::after{content:'✓';font-size:.65rem;color:#fff;font-weight:700;}
 .si{flex:1;min-width:0;}
-.sdy{font-size:.65rem;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:.04em;}
+.sdy{font-size:.62rem;font-weight:500;color:var(--t2);letter-spacing:.02em;min-width:90px;}
 .sty{font-size:.77rem;color:var(--t);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .sdt{font-size:.68rem;color:var(--t3);margin-top:2px;line-height:1.4;white-space:normal;}
 .bgb{font-size:.58rem;padding:3px 8px;border-radius:9px;font-weight:500;flex-shrink:0;}
@@ -125,6 +125,12 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
 .plan-row{display:flex;gap:5px;margin-top:3px;flex-wrap:wrap;}
 .plan-pill{font-size:.6rem;padding:2px 7px;border-radius:8px;font-weight:500;background:rgba(212,99,26,.08);color:var(--or);border:1px solid rgba(212,99,26,.15);}
 .plan-pill.elev{background:rgba(38,113,168,.08);color:var(--bl);border-color:rgba(38,113,168,.15);}
+.stats-block{margin-top:4px;display:flex;flex-direction:column;gap:3px;}
+.stats-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.stats-lbl{font-size:.58rem;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;min-width:42px;}
+.real-km{background:rgba(46,125,50,.1);color:#2e7d32;border-color:rgba(46,125,50,.2);}
+.real-elev{background:rgba(38,113,168,.1);color:var(--bl);border-color:rgba(38,113,168,.2);}
+.real-dur{background:var(--bg2);color:var(--t2);border-color:var(--b2);}
 .strava-data{display:none;padding:4px 14px 9px 55px;gap:8px;flex-wrap:wrap;}
 .strava-data.vis{display:flex;}
 .strava-pill{font-size:.65rem;padding:3px 9px;border-radius:9px;background:var(--orl);color:#854F0B;font-weight:500;border:1px solid rgba(212,99,26,.15);}
@@ -281,8 +287,9 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
   <div class="sr">
     <div class="sc"><div class="sv" id="sdone">0</div><div class="su">séances</div><div class="sl">validées</div></div>
     <div class="sc"><div class="sv" id="skm">0</div><div class="su">km</div><div class="sl">cumulés</div></div>
-    <div class="sc"><div class="sv" id="sweek">—</div><div class="su">/ 17</div><div class="sl">semaine</div></div>
+    <div class="sc"><div class="sv" id="selev">0</div><div class="su">m D+</div><div class="sl">cumulés</div></div>
   </div>
+  <div style="text-align:center;padding:4px 0 2px;font-size:.62rem;color:var(--t3);">Semaine <span id="sweek" style="font-weight:500;color:var(--t2);">—</span> / 17</div>
 
   <!-- Semaine en cours uniquement -->
   <div id="cwrap" style="padding:14px 0 20px"></div>
@@ -384,8 +391,20 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
 
 <script>
 const RACE=new Date('2026-07-04T07:00:00');
-const START=new Date('2026-02-24T00:00:00');
+const START=new Date('2026-02-23T00:00:00');
 const TOTAL=Math.round((RACE-START)/86400000);
+const MONTHS_FR=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
+function weekStartDate(wn){return new Date(START.getTime()+(wn-1)*7*86400000);}
+function fmtDate(d){return d.getDate()+' '+MONTHS_FR[d.getMonth()];}
+function fmtDateFull(d){
+  const days=['dim','lun','mar','mer','jeu','ven','sam'];
+  return days[d.getDay()]+' '+d.getDate()+' '+MONTHS_FR[d.getMonth()];
+}
+function sessionDate(wn,pos){
+  // pos 0=Lun, 1=Mar ... 6=Dim
+  const ws=weekStartDate(wn);
+  return new Date(ws.getTime()+pos*86400000);
+}
 const SK='qv5';
 const CLIENT_ID='211350';
 const REDIRECT='https://stupendous-cocada-62e7d6.netlify.app/callback.html';
@@ -540,8 +559,9 @@ async function syncStrava(){
   if(!ok){if(btn){btn.disabled=false;btn.textContent='Sync';}return;}
   try{
     // fetch last 60 activities from start of training
+    // Fetch from START of programme, up to 100 activities
     const since=Math.floor(START.getTime()/1000);
-    const res=await fetch(`https://www.strava.com/api/v3/athlete/activities?after=${since}&per_page=60`,{headers:{Authorization:'Bearer '+D.strava.token}});
+    const res=await fetch('https://www.strava.com/api/v3/athlete/activities?after='+since+'&per_page=100',{headers:{Authorization:'Bearer '+D.strava.token}});
     const acts=await res.json();
     if(Array.isArray(acts)){
       D.strava.acts=acts.map(a=>({
@@ -689,9 +709,27 @@ function gws(wn){
 }
 
 function gst(){
-  let tot=0,dn=0,km=0,cd=0,ct=0,sd=0,st2=0,wd=0;
-  BW.forEach(w=>{let wdd=0,wt=0;w.ss.forEach((s,i)=>{if(s.b==='r')return;tot++;wt++;if(D.sess[sk2(w.n,i)]){dn++;wdd++;km+=s.k;if(s.b==='c')cd++;if(s.b==='s')sd++;}if(s.b==='c')ct++;if(s.b==='s')st2++;});if(wdd>0&&wdd===wt)wd++;});
-  return{tot,dn,km,cd,ct,sd,st2,wd};
+  let tot=0,dn=0,km=0,elev=0,cd=0,ct=0,sd=0,st2=0,wd=0;
+  BW.forEach(w=>{
+    let wdd=0,wt=0;
+    w.ss.forEach((s,i)=>{
+      if(s.b==='r')return;
+      tot++;wt++;
+      if(D.sess[sk2(w.n,i)]){
+        dn++;wdd++;km+=s.k;
+        // D+ : strava réel si dispo, sinon prévu
+        const sm=D.stravaMatch&&D.stravaMatch[sk2(w.n,i)];
+        if(sm&&!sm.gym)elev+=sm.elev;
+        else elev+=(s.e||0);
+        if(s.b==='c')cd++;
+        if(s.b==='s')sd++;
+      }
+      if(s.b==='c')ct++;
+      if(s.b==='s')st2++;
+    });
+    if(wdd>0&&wdd===wt)wd++;
+  });
+  return{tot,dn,km,elev,cd,ct,sd,st2,wd};
 }
 
 function buildWeekCard(w,c,expanded){
@@ -710,22 +748,33 @@ function buildWeekCard(w,c,expanded){
     const key=sk2(w.n,s.oi);
     const sm=D.stravaMatch&&D.stravaMatch[key];
     const displayDay=ORDERED_DAYS[pos]||s.d;
+    const sessDate=sessionDate(w.n,pos);
+    const sessDateStr=fmtDateFull(sessDate);
     const trailBadge=sm&&sm.trail?'<span class="strava-pill" style="background:#e8f2fb;color:#0C447C;border:1px solid rgba(12,68,124,.15);">🏔 Trail</span>':'';
-    let stravaHtml='';
-    if(sm){
-      const pills=sm.gym
-        ?'<span class="strava-pill dur">'+fmtDur(sm.dur)+'</span><span class="strava-pill" style="background:var(--aml);color:#633806;border:1px solid rgba(200,134,10,.15);">🏋 Salle</span>'
-        :'<span class="strava-pill">'+fmtKm(sm.km)+'</span><span class="strava-pill elev">+'+Math.round(sm.elev)+' m</span><span class="strava-pill dur">'+fmtDur(sm.dur)+'</span>'+trailBadge;
-      stravaHtml='<div class="strava-data vis">'+pills+'<span style="font-size:.58rem;color:var(--t3);align-self:center;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+sm.name+'</span></div>';
+    // ── Stats block : prévu + réalisé ──
+    let statsHtml='';
+    if(s.b==='c'||s.b==='ra'){
+      const hasPlanned=s.k>0||(s.e||0)>0;
+      const pkP=s.k>0?'<span class="plan-pill">'+s.k+' km</span>':'';
+      const peP=(s.e||0)>0?'<span class="plan-pill elev">+'+(s.e||0)+' m</span>':'';
+      const plannedPills=hasPlanned?'<div class="stats-row"><span class="stats-lbl">Prévu</span>'+pkP+peP+'</div>':'';
+      let donePills='';
+      if(sm&&!sm.gym){
+        donePills='<div class="stats-row"><span class="stats-lbl">Réalisé</span>'
+          +'<span class="plan-pill real-km">'+fmtKm(sm.km)+'</span>'
+          +(sm.elev>0?'<span class="plan-pill real-elev">+'+Math.round(sm.elev)+' m</span>':'')
+          +'<span class="plan-pill real-dur">'+fmtDur(sm.dur)+'</span>'
+          +trailBadge
+          +'</div>';
+      }
+      if(plannedPills||donePills)statsHtml='<div class="stats-block">'+plannedPills+donePills+'</div>';
+    } else if(s.b==='s'&&sm&&sm.gym){
+      statsHtml='<div class="stats-block"><div class="stats-row"><span class="stats-lbl">Réalisé</span><span class="plan-pill real-dur">'+fmtDur(sm.dur)+'</span><span class="plan-pill" style="background:var(--aml);color:#633806;">🏋 Salle</span></div></div>';
     }
-    let plannedHtml='';
-    if(!done2 && (s.b==='c'||s.b==='ra') && (s.k>0||s.e>0)){
-      const pk=s.k>0?'<span class="plan-pill">'+s.k+' km</span>':'';
-      const pe=(s.e||0)>0?'<span class="plan-pill elev">+'+(s.e||0)+' m</span>':'';
-      plannedHtml='<div class="plan-row">'+pk+pe+'</div>';
-    }
+    let stravaHtml=''; // kept for compat but now empty — stats shown above
+    let plannedHtml=''; // same
     const detailHtml=s.dt&&s.b!=='r'?'<div class="sdt">'+s.dt+'</div>':'';
-    return '<div class="srow" data-wn="'+w.n+'" data-oi="'+s.oi+'" draggable="false"><div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div><div class="ck'+(done2?' dn':'')+'" onclick="tgs('+w.n+','+s.oi+',this)"></div><div class="si"><div class="sdy">'+displayDay+'</div><div class="sty">'+s.t+'</div>'+detailHtml+plannedHtml+'</div><div class="bgb '+bl+'">'+bt+'</div></div>'+stravaHtml;
+    return '<div class="srow" data-wn="'+w.n+'" data-oi="'+s.oi+'" draggable="false"><div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div><div class="ck'+(done2?' dn':'')+'" onclick="tgs('+w.n+','+s.oi+',this)"></div><div class="si"><div class="sdy">'+sessDateStr+'</div><div class="sty">'+s.t+'</div>'+detailHtml+statsHtml+'</div><div class="bgb '+bl+'">'+bt+'</div></div>';
   }).join('');
   const isOpen=expanded;
   const ws=D.weekStatus&&D.weekStatus[w.n]||{};
@@ -737,7 +786,9 @@ function buildWeekCard(w,c,expanded){
   const btnBg=hasBadge?'var(--rel)':'var(--bg2)';
   const btnBorder=hasBadge?'rgba(192,57,43,.3)':'var(--b2)';
   const btnIcon=hasBadge?'⚠':'＋';
-  card.innerHTML='<div class="wh" onclick="tgw(this)"><div class="wl"><div class="wnum '+nc+'">'+nt+'</div><div><div class="wti">Semaine '+w.n+' · '+w.lb+'</div><div class="wme">'+w.ph+' · '+w.km+' km · '+wp+'% validé</div>'+badgeRow+noteRow+'</div></div><div style="display:flex;align-items:center;gap:6px;"><button onclick="event.stopPropagation();openStatusModal('+w.n+')" style="width:26px;height:26px;border-radius:50%;background:'+btnBg+';border:1px solid '+btnBorder+';font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+btnIcon+'</button><div class="wch'+(isOpen?' open':'')+'">▾</div></div></div><div class="ws'+(isOpen?' open':'')+'"><div class="rb"><span class="rht">Appuie sur les 3 traits pour déplacer</span><button class="rbtn" onclick="tgr(this,'+w.n+')" data-wn="'+w.n+'">Réagencer</button></div><div class="sl2" data-wn="'+w.n+'">'+sl+'</div></div>';
+  const wsd=weekStartDate(w.n);const wed=new Date(wsd.getTime()+6*86400000);
+  const wdateStr=fmtDate(wsd)+' – '+fmtDate(wed);
+  card.innerHTML='<div class="wh" onclick="tgw(this)"><div class="wl"><div class="wnum '+nc+'">'+nt+'</div><div><div class="wti">Semaine '+w.n+' · '+w.lb+'</div><div class="wme">'+w.ph+' · '+w.km+' km &nbsp;·&nbsp; '+wdateStr+'</div><div class="wme" style="margin-top:1px;">'+wp+'% validé</div>'+badgeRow+noteRow+'</div></div><div style="display:flex;align-items:center;gap:6px;"><button onclick="event.stopPropagation();openStatusModal('+w.n+')" style="width:26px;height:26px;border-radius:50%;background:'+btnBg+';border:1px solid '+btnBorder+';font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;">'+btnIcon+'</button><div class="wch'+(isOpen?' open':'')+'">▾</div></div></div><div class="ws'+(isOpen?' open':'')+'"><div class="rb"><span class="rht">Appuie sur les 3 traits pour déplacer</span><button class="rbtn" onclick="tgr(this,'+w.n+')" data-wn="'+w.n+'">Réagencer</button></div><div class="sl2" data-wn="'+w.n+'">'+sl+'</div></div>';
   return card;
 }
 
@@ -781,6 +832,7 @@ function rdash(){
   const st=gst();
   document.getElementById('sdone').textContent=st.dn;
   document.getElementById('skm').textContent=st.km;
+  document.getElementById('selev').textContent=Math.round(st.elev);
   document.getElementById('sweek').textContent=c;
   updateStravaBanner();
   updateWeeklyWidget(c);
@@ -808,7 +860,7 @@ function tgs(wn,oi,el){
   el.classList.toggle('dn',!!D.sess[key]);
   const w=BW.find(x=>x.n===wn),s=w&&w.ss[oi];
   if(D.sess[key])toast(s&&s.k>0?'+'+s.k+' km ✓':'Séance validée ✓');
-  const st=gst();document.getElementById('sdone').textContent=st.dn;document.getElementById('skm').textContent=st.km;
+  const st=gst();document.getElementById('sdone').textContent=st.dn;document.getElementById('skm').textContent=st.km;document.getElementById('selev').textContent=Math.round(st.elev);
 }
 
 function tgr(btn,wn){
@@ -821,11 +873,10 @@ function tgr(btn,wn){
 
 const ORDERED_DAYS_GLOBAL=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
 function refreshDayLabels(list,wn){
-  // Update day labels in place after reorder, without rebuilding the whole DOM
   const rows=[...list.querySelectorAll('.srow')];
   rows.forEach((row,pos)=>{
     const dayEl=row.querySelector('.sdy');
-    if(dayEl)dayEl.textContent=ORDERED_DAYS_GLOBAL[pos]||'';
+    if(dayEl)dayEl.textContent=fmtDateFull(sessionDate(wn,pos));
   });
 }
 
