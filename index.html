@@ -80,6 +80,21 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
 .wme{font-size:.62rem;color:var(--t3);margin-top:1px;}
 .wch{font-size:.75rem;color:var(--t3);transition:transform .2s;display:inline-block;}
 .wch.open{transform:rotate(180deg);}
+.wst{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;}
+.wst-badge{font-size:.6rem;font-weight:500;padding:2px 8px;border-radius:9px;display:flex;align-items:center;gap:3px;}
+.wst-sick{background:#fde8f0;color:#9b1c4a;border:1px solid rgba(155,28,74,.2);}
+.wst-inj{background:#fdecea;color:#7f1d1d;border:1px solid rgba(192,57,43,.25);}
+.wst-note{font-size:.62rem;color:var(--t3);font-style:italic;margin-top:3px;}
+.status-modal{position:fixed;inset:0;background:rgba(44,31,14,0.65);z-index:500;display:flex;align-items:flex-end;}
+.status-sheet{background:var(--bg);border-radius:20px 20px 0 0;padding:22px 20px 36px;width:100%;max-height:85dvh;overflow-y:auto;}
+.status-sheet h3{font-family:var(--fd);font-size:1.05rem;color:var(--t);margin-bottom:14px;font-style:italic;}
+.status-row{display:flex;gap:9px;margin-bottom:12px;}
+.status-tog{flex:1;padding:10px 8px;border-radius:var(--rs);border:1.5px solid var(--b2);font-size:.78rem;font-weight:500;color:var(--t2);background:var(--bg2);text-align:center;transition:all .15s;}
+.status-tog.on-sick{background:#fde8f0;border-color:rgba(155,28,74,.35);color:#9b1c4a;}
+.status-tog.on-inj{background:var(--rel);border-color:rgba(192,57,43,.35);color:var(--re);}
+.status-note-lbl{font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:block;}
+.status-save{width:100%;background:var(--or);color:#fff;padding:12px;border-radius:var(--rs);font-size:.84rem;font-weight:500;margin-top:14px;}
+.status-cancel{width:100%;background:var(--bg2);border:1px solid var(--b2);color:var(--t2);padding:11px;border-radius:var(--rs);font-size:.82rem;margin-top:8px;}
 .ws{border-top:1px solid var(--b1);display:none;}
 .ws.open{display:block;}
 .rb{display:flex;align-items:center;padding:7px 14px 5px;gap:8px;border-bottom:1px solid var(--b1);}
@@ -353,6 +368,19 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
 </nav>
 </div>
 <div class="toast" id="toast"></div>
+<div class="status-modal" id="status-modal" style="display:none" onclick="if(event.target===this)closeStatusModal()">
+  <div class="status-sheet">
+    <h3>Semaine <span id="sm-wnum">—</span> · Statut</h3>
+    <div class="status-row">
+      <button class="status-tog" id="sm-sick" onclick="toggleStatus('sick')">🤒 Malade</button>
+      <button class="status-tog" id="sm-inj" onclick="toggleStatus('injured')">🩹 Blessé·e</button>
+    </div>
+    <label class="status-note-lbl">Note (optionnel)</label>
+    <textarea id="sm-note" class="ta" rows="3" placeholder="Ex : grippe 3 jours, douleur hanche droite en descente…"></textarea>
+    <button class="status-save" onclick="saveStatus()">Enregistrer</button>
+    <button class="status-cancel" onclick="closeStatusModal()">Annuler</button>
+  </div>
+</div>
 
 <script>
 const RACE=new Date('2026-07-04T07:00:00');
@@ -392,6 +420,7 @@ if(!D.pain)D.pain={hanche:-1,genou:-1};
 if(!D.ord)D.ord={};
 if(!D.strava)D.strava={token:null,refresh:null,expires:0,acts:[]};
 if(!D.stravaAuto)D.stravaAuto={};
+if(!D.weekStatus)D.weekStatus={};
 
 function daysLeft(){return Math.max(0,Math.ceil((RACE-new Date())/86400000));}
 function curWeek(){const e=Math.floor((new Date()-START)/86400000);if(e<0)return 1;return Math.min(Math.floor(e/7)+1,17);}
@@ -699,7 +728,13 @@ function buildWeekCard(w,c,expanded){
     return '<div class="srow" data-wn="'+w.n+'" data-oi="'+s.oi+'" draggable="false"><div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div><div class="ck'+(done2?' dn':'')+'" onclick="tgs('+w.n+','+s.oi+',this)"></div><div class="si"><div class="sdy">'+displayDay+'</div><div class="sty">'+s.t+'</div>'+detailHtml+plannedHtml+'</div><div class="bgb '+bl+'">'+bt+'</div></div>'+stravaHtml;
   }).join('');
   const isOpen=expanded;
-  card.innerHTML='<div class="wh" onclick="tgw(this)"><div class="wl"><div class="wnum '+nc+'">'+nt+'</div><div><div class="wti">Semaine '+w.n+' · '+w.lb+'</div><div class="wme">'+w.ph+' · '+w.km+' km · '+wp+'% validé</div></div></div><div class="wch'+(isOpen?' open':'')+'">▾</div></div><div class="ws'+(isOpen?' open':'')+'"><div class="rb"><span class="rht">Appuie sur les 3 traits pour déplacer</span><button class="rbtn" onclick="tgr(this,'+w.n+')" data-wn="'+w.n+'">Réagencer</button></div><div class="sl2" data-wn="'+w.n+'">'+sl+'</div></div>';
+  const ws=D.weekStatus&&D.weekStatus[w.n]||{};
+  const sickBadge=ws.sick?'<span class="wst-badge wst-sick">🤒 Malade</span>':'';
+  const injBadge=ws.injured?'<span class="wst-badge wst-inj">🩹 Blessé</span>':'';
+  const hasBadge=ws.sick||ws.injured;
+  const badgeRow=hasBadge?'<div class="wst">'+sickBadge+injBadge+'</div>':'';
+  const noteRow=ws.note?'<div class="wst-note">'+ws.note+'</div>':'';
+  card.innerHTML='<div class="wh" onclick="tgw(this)"><div class="wl"><div class="wnum '+nc+'">'+nt+'</div><div><div class="wti">Semaine '+w.n+' · '+w.lb+'</div><div class="wme">'+w.ph+' · '+w.km+' km · '+wp+'% validé</div>'+badgeRow+noteRow+'</div></div><div style="display:flex;align-items:center;gap:6px;"><button onclick="event.stopPropagation();openStatusModal('+w.n+')" style="width:26px;height:26px;border-radius:50%;background:var(--bg2);border:1px solid var(--b2);font-size:.75rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;"'+(hasBadge?' style="background:var(--rel);border-color:rgba(192,57,43,.3);"':'')+'>'+(hasBadge?'⚠':'＋')+'</button><div class="wch'+(isOpen?' open':'')+'">▾</div></div></div><div class="ws'+(isOpen?' open':'')+'"><div class="rb"><span class="rht">Appuie sur les 3 traits pour déplacer</span><button class="rbtn" onclick="tgr(this,'+w.n+')" data-wn="'+w.n+'">Réagencer</button></div><div class="sl2" data-wn="'+w.n+'">'+sl+'</div></div>';
   return card;
 }
 
@@ -781,6 +816,16 @@ function tgr(btn,wn){
   list.querySelectorAll('.srow').forEach(r=>r.setAttribute('draggable',on?'true':'false'));
 }
 
+const ORDERED_DAYS_GLOBAL=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+function refreshDayLabels(list,wn){
+  // Update day labels in place after reorder, without rebuilding the whole DOM
+  const rows=[...list.querySelectorAll('.srow')];
+  rows.forEach((row,pos)=>{
+    const dayEl=row.querySelector('.sdy');
+    if(dayEl)dayEl.textContent=ORDERED_DAYS_GLOBAL[pos]||'';
+  });
+}
+
 let ds=null;
 function initDrag(){
   document.querySelectorAll('.sl2').forEach(list=>{
@@ -792,7 +837,7 @@ function initDrag(){
       const wn=parseInt(list.dataset.wn);const rows=[...list.querySelectorAll('.srow')];
       const si=rows.indexOf(ds),ti=rows.indexOf(tgt);rows.splice(si,1);rows.splice(ti,0,ds);
       rows.forEach(r=>list.appendChild(r));list.querySelectorAll('.srow').forEach(r=>r.classList.remove('dover'));
-      D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));sv(D);toast('Ordre sauvegardé');rdash();
+      D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));sv(D);refreshDayLabels(list,wn);updateWeeklyWidget(curWeek());toast('Ordre sauvegardé');
     });
   });
   document.querySelectorAll('.sl2').forEach(list=>{
@@ -817,7 +862,7 @@ function initDrag(){
       if(tgt&&tgt!==td){
         const wn=parseInt(list.dataset.wn);const rows=[...list.querySelectorAll('.srow')];
         const si=rows.indexOf(td),ti=rows.indexOf(tgt);rows.splice(si,1);rows.splice(ti,0,td);
-        rows.forEach(r=>list.appendChild(r));D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));sv(D);toast('Ordre sauvegardé');rdash();
+        rows.forEach(r=>list.appendChild(r));D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));sv(D);refreshDayLabels(list,wn);updateWeeklyWidget(curWeek());toast('Ordre sauvegardé');
       }
       td=null;
     });
@@ -877,6 +922,35 @@ document.getElementById('savebtn').addEventListener('click',()=>{
   D.entries.push({date:new Date().toISOString(),pain:{hanche:D.pain.hanche,genou:D.pain.genou},note});
   D.pain={hanche:-1,genou:-1};sv(D);document.getElementById('jnote').value='';rjournal();toast('Entrée enregistrée ✓');
 });
+
+// ── WEEK STATUS MODAL ──
+let _smWn=null;
+function openStatusModal(wn){
+  _smWn=wn;
+  const ws=D.weekStatus[wn]||{};
+  document.getElementById('sm-wnum').textContent=wn;
+  document.getElementById('sm-note').value=ws.note||'';
+  document.getElementById('sm-sick').className='status-tog'+(ws.sick?' on-sick':'');
+  document.getElementById('sm-inj').className='status-tog'+(ws.injured?' on-inj':'');
+  document.getElementById('status-modal').style.display='flex';
+}
+function closeStatusModal(){document.getElementById('status-modal').style.display='none';_smWn=null;}
+function toggleStatus(type){
+  if(!_smWn)return;
+  const ws=D.weekStatus[_smWn]||{};
+  ws[type]=!ws[type];
+  D.weekStatus[_smWn]=ws;
+  const btn=document.getElementById(type==='sick'?'sm-sick':'sm-inj');
+  btn.className='status-tog'+(ws[type]?(type==='sick'?' on-sick':' on-inj'):'');
+}
+function saveStatus(){
+  if(!_smWn)return;
+  const ws=D.weekStatus[_smWn]||{};
+  ws.note=document.getElementById('sm-note').value.trim();
+  D.weekStatus[_smWn]=ws;
+  sv(D);closeStatusModal();rdash();
+  toast('Statut semaine '+_smWn+' enregistré');
+}
 
 // Init
 handleOAuthCallback();
