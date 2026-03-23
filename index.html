@@ -548,36 +548,71 @@ async function ensureFreshToken(){
       D.strava.expires=data.expires_at;
       sv(D);return true;
     }
-  }catch(e){}
+    console.error('Token refresh failed',data);
+  }catch(e){console.error('Token refresh error',e);}
   return false;
 }
 
 async function syncStrava(){
   const btn=document.getElementById('strava-action-btn');
   if(btn){btn.disabled=true;btn.innerHTML='<span class="spin">↻</span>';}
-  const ok=await ensureFreshToken();
-  if(!ok){if(btn){btn.disabled=false;btn.textContent='Sync';}return;}
+
+  // Refresh token if needed
+  const tokenOk=await ensureFreshToken();
+  if(!tokenOk){
+    toast('Session expirée — reconnecte Strava');
+    // Force disconnect so user reconnects cleanly
+    D.strava.token=null;D.strava.refresh=null;D.strava.expires=0;sv(D);
+    updateStravaBanner();
+    if(btn){btn.disabled=false;}
+    return;
+  }
+
   try{
-    // fetch last 60 activities from start of training
-    // Fetch from START of programme, up to 100 activities
     const since=Math.floor(START.getTime()/1000);
-    const res=await fetch('https://www.strava.com/api/v3/athlete/activities?after='+since+'&per_page=100',{headers:{Authorization:'Bearer '+D.strava.token}});
-    const acts=await res.json();
-    if(Array.isArray(acts)){
-      D.strava.acts=acts.map(a=>({
-        id:a.id,name:a.name,
-        type:a.sport_type||a.type,
-        date:a.start_date_local,
-        km:a.distance,
-        elev:a.total_elevation_gain,
-        dur:a.moving_time,
-      }));
-      sv(D);
-      autoMatchActivities();
-      renderStravaActs();
-      updateStravaStats();
+    const url='https://www.strava.com/api/v3/athlete/activities?after='+since+'&per_page=100';
+    const res=await fetch(url,{headers:{Authorization:'Bearer '+D.strava.token}});
+
+    if(!res.ok){
+      const errText=await res.text();
+      toast('Erreur Strava '+res.status+' — reconnecte');
+      console.error('Strava API error',res.status,errText);
+      if(res.status===401){
+        // Token rejected — force reconnect
+        D.strava.token=null;D.strava.refresh=null;D.strava.expires=0;sv(D);
+        updateStravaBanner();
+      }
+      if(btn){btn.disabled=false;btn.textContent='Sync';}
+      return;
     }
-  }catch(e){toast('Erreur sync Strava');}
+
+    const acts=await res.json();
+    if(!Array.isArray(acts)){
+      toast('Réponse inattendue de Strava');
+      console.error('Strava unexpected response',acts);
+      if(btn){btn.disabled=false;btn.textContent='Sync';}
+      return;
+    }
+
+    D.strava.acts=acts.map(a=>({
+      id:a.id,name:a.name,
+      type:a.sport_type||a.type,
+      date:a.start_date_local,
+      km:a.distance,
+      elev:a.total_elevation_gain,
+      dur:a.moving_time,
+    }));
+    D.strava.lastSync=new Date().toISOString();
+    sv(D);
+    autoMatchActivities();
+    renderStravaActs();
+    updateStravaStats();
+    rdash();
+    toast('Sync OK — '+acts.length+' activité'+(acts.length>1?'s':'')+' récupérée'+(acts.length>1?'s':''));
+  }catch(e){
+    toast('Erreur réseau — réessaie');
+    console.error('Strava sync error',e);
+  }
   if(btn){btn.disabled=false;btn.textContent='Sync';}
 }
 
@@ -670,8 +705,9 @@ function updateStravaBanner(){
   const btn=document.getElementById('strava-action-btn');
   if(D.strava.token){
     banner.classList.add('connected');
-    t.textContent='Strava connecté';
-    s.textContent='Dernière sync : '+(D.strava.acts.length?new Date(D.strava.acts[0].date).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):'jamais');
+    t.textContent='Strava connecté — '+D.strava.acts.length+' activité'+(D.strava.acts.length>1?'s':'');
+    const ls=D.strava.lastSync?new Date(D.strava.lastSync).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'jamais';
+    s.textContent='Dernière sync : '+ls;
     btn.className='strava-sync';btn.textContent='Sync';
   }else{
     banner.classList.remove('connected');
@@ -864,7 +900,8 @@ function tgs(wn,oi,el){
 }
 
 function tgr(btn,wn){
-  const list=document.querySelector('.sl2[data-wn="'+wn+'"]');
+  // Find the sl2 list relative to the button clicked, not globally
+  const list=btn.closest('.ws').querySelector('.sl2');
   const on=btn.classList.toggle('on');
   btn.textContent=on?'Terminer':'Réagencer';
   list.querySelectorAll('.dh').forEach(h=>h.classList.toggle('vis',on));
