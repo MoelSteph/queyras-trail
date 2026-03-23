@@ -810,7 +810,8 @@ function buildWeekCard(w,c,expanded){
     let stravaHtml=''; // kept for compat but now empty — stats shown above
     let plannedHtml=''; // same
     const detailHtml=s.dt&&s.b!=='r'?'<div class="sdt">'+s.dt+'</div>':'';
-    return '<div class="srow" data-wn="'+w.n+'" data-oi="'+s.oi+'" draggable="false"><div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div><div class="ck'+(done2?' dn':'')+'" onclick="tgs('+w.n+','+s.oi+',this)"></div><div class="si"><div class="sdy">'+sessDateStr+'</div><div class="sty">'+s.t+'</div>'+detailHtml+statsHtml+'</div><div class="bgb '+bl+'">'+bt+'</div></div>';
+    const locked='0'; // Toutes les séances sont toujours réagençables
+    return '<div class="srow" data-wn="'+w.n+'" data-oi="'+s.oi+'" data-locked="'+locked+'" draggable="false"><div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div><div class="ck'+(done2?' dn':'')+'" onclick="tgs('+w.n+','+s.oi+',this)"></div><div class="si"><div class="sdy">'+sessDateStr+'</div><div class="sty">'+s.t+'</div>'+detailHtml+statsHtml+'</div><div class="bgb '+bl+'">'+bt+'</div></div>';
   }).join('');
   const isOpen=expanded;
   const ws=D.weekStatus&&D.weekStatus[w.n]||{};
@@ -900,12 +901,19 @@ function tgs(wn,oi,el){
 }
 
 function tgr(btn,wn){
-  // Find the sl2 list relative to the button clicked, not globally
   const list=btn.closest('.ws').querySelector('.sl2');
   const on=btn.classList.toggle('on');
   btn.textContent=on?'Terminer':'Réagencer';
-  list.querySelectorAll('.dh').forEach(h=>h.classList.toggle('vis',on));
-  list.querySelectorAll('.srow').forEach(r=>r.setAttribute('draggable',on?'true':'false'));
+  list.querySelectorAll('.srow').forEach(r=>{
+    const locked=r.dataset.locked==='1';
+    // Poignée : visible seulement si mode actif ET séance non verrouillée
+    const dh=r.querySelector('.dh');
+    if(dh)dh.classList.toggle('vis',on&&!locked);
+    // Drag : seulement si non verrouillé
+    r.setAttribute('draggable',(on&&!locked)?'true':'false');
+    // Style visuel : séance verrouillée légèrement estompée en mode réagencement
+    r.style.opacity=(on&&locked)?'0.45':'';
+  });
 }
 
 const ORDERED_DAYS_GLOBAL=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
@@ -920,11 +928,13 @@ function refreshDayLabels(list,wn){
 let ds=null;
 function initDrag(){
   document.querySelectorAll('.sl2').forEach(list=>{
-    list.addEventListener('dragstart',e=>{const r=e.target.closest('.srow');if(!r)return;ds=r;r.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
+    list.addEventListener('dragstart',e=>{const r=e.target.closest('.srow');if(!r||r.dataset.locked==='1')return;ds=r;r.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
     list.addEventListener('dragend',()=>{if(ds)ds.classList.remove('dragging');list.querySelectorAll('.srow').forEach(r=>r.classList.remove('dover'));ds=null;});
     list.addEventListener('dragover',e=>{e.preventDefault();const r=e.target.closest('.srow');if(!r||r===ds)return;list.querySelectorAll('.srow').forEach(x=>x.classList.remove('dover'));r.classList.add('dover');});
     list.addEventListener('drop',e=>{
       e.preventDefault();const tgt=e.target.closest('.srow');if(!tgt||tgt===ds||!ds)return;
+      // Refuser le drop sur une séance déjà faite
+      if(tgt.dataset.locked==='1'){list.querySelectorAll('.srow').forEach(r=>r.classList.remove('dover'));toast('Séance déjà réalisée — non déplaçable');return;}
       const wn=parseInt(list.dataset.wn);const rows=[...list.querySelectorAll('.srow')];
       const si=rows.indexOf(ds),ti=rows.indexOf(tgt);rows.splice(si,1);rows.splice(ti,0,ds);
       rows.forEach(r=>list.appendChild(r));list.querySelectorAll('.srow').forEach(r=>r.classList.remove('dover'));
@@ -951,9 +961,12 @@ function initDrag(){
       const t=e.changedTouches[0];const el=document.elementFromPoint(t.clientX,t.clientY);
       const tgt=el&&el.closest('.srow');list.querySelectorAll('.srow').forEach(r=>r.classList.remove('dover'));
       if(tgt&&tgt!==td){
-        const wn=parseInt(list.dataset.wn);const rows=[...list.querySelectorAll('.srow')];
-        const si=rows.indexOf(td),ti=rows.indexOf(tgt);rows.splice(si,1);rows.splice(ti,0,td);
-        rows.forEach(r=>list.appendChild(r));D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));sv(D);refreshDayLabels(list,wn);updateWeeklyWidget(curWeek());toast('Ordre sauvegardé');
+        if(tgt.dataset.locked==='1'){toast('Séance déjà réalisée — non déplaçable');}
+        else{
+          const wn=parseInt(list.dataset.wn);const rows=[...list.querySelectorAll('.srow')];
+          const si=rows.indexOf(td),ti=rows.indexOf(tgt);rows.splice(si,1);rows.splice(ti,0,td);
+          rows.forEach(r=>list.appendChild(r));D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));sv(D);refreshDayLabels(list,wn);updateWeeklyWidget(curWeek());toast('Ordre sauvegardé');
+        }
       }
       td=null;
     });
