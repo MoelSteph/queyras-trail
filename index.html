@@ -128,6 +128,7 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
 .split-save{width:100%;background:var(--or);color:#fff;padding:12px;border-radius:var(--rs);font-size:.84rem;font-weight:500;margin-top:10px;}
 .split-cancel{width:100%;background:var(--bg2);border:1px solid var(--b2);color:var(--t2);padding:11px;border-radius:var(--rs);font-size:.82rem;margin-top:8px;}
 .srow.is-split{border-left:2px solid var(--am);}
+.split-sub-row{display:flex;align-items:center;gap:8px;padding:5px 0 2px;border-top:1px dashed rgba(200,134,10,.25);margin-top:5px;}
 .bgb{font-size:.58rem;padding:3px 8px;border-radius:9px;font-weight:500;flex-shrink:0;}
 .bc{background:var(--orll);color:#854F0B;}
 .bs{background:var(--bll);color:#0C447C;}
@@ -403,6 +404,15 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
     </div>
     <div class="split-part">
       <div class="split-part-title">Partie B — ajoutée</div>
+      <select class="split-input" id="sp-b-day">
+        <option value="0">Lundi</option>
+        <option value="1">Mardi</option>
+        <option value="2">Mercredi</option>
+        <option value="3">Jeudi</option>
+        <option value="4">Vendredi</option>
+        <option value="5">Samedi</option>
+        <option value="6">Dimanche</option>
+      </select>
       <input class="split-input" id="sp-b-title" placeholder="Titre (ex: Footing récup)"/>
       <input class="split-input" id="sp-b-km" type="number" placeholder="km prévus" min="0" step="0.5"/>
       <input class="split-input" id="sp-b-note" placeholder="Note (optionnel)"/>
@@ -817,62 +827,46 @@ function gst(){
 function buildWeekCard(w,c,expanded){
   // Build augmented session list: base sessions + split children injected at their stored position
   const ss=gws(w.n);
-  // Collect split children for this week
-  const splitChildren=[];
+  // Collect split children for this week, indexed by their target day position
+  const splitByDay={}; // pos → [splitData]
   if(D.splits){
     Object.keys(D.splits).forEach(k=>{
       if(!k.startsWith('split_'))return;
       const sp=D.splits[k];
       if(sp.wn!==w.n)return;
-      // synthetic session object for Part B
-      splitChildren.push({
-        isSplitChild:true,
-        parentOi:sp.oi,
-        splitKey:k,
-        t:sp.bTitle,dt:sp.bNote||'',k:sp.bKm||0,e:0,b:'c',
-        oi:'c'+sp.oi, // unique oi string
-        pos:sp.bPos!==undefined?sp.bPos:ss.findIndex(x=>x.oi===sp.oi)+1,
-      });
+      const targetPos=sp.bDay!==undefined?sp.bDay:ss.findIndex(x=>x.oi===sp.oi)+1;
+      if(!splitByDay[targetPos])splitByDay[targetPos]=[];
+      splitByDay[targetPos].push({...sp,splitKey:k});
     });
   }
-  // Merge and sort by position
-  const allRows=[];
-  ss.forEach((s,i)=>allRows.push({...s,_baseIdx:i,isSplitChild:false}));
-  splitChildren.forEach(sc=>{
-    const insertAt=Math.min(Math.max(0,sc.pos),allRows.length);
-    allRows.splice(insertAt,0,sc);
-  });
-  // Recalculate positions after merge
-  allRows.forEach((s,i)=>s._pos=i);
+  const allRows=ss.map((s,i)=>({...s,_baseIdx:i,isSplitChild:false}));
 
   const ic=w.n===c;
   let wdd=0,wt=0;ss.forEach(s=>{if(s.b==='r')return;wt++;if(D.sess[sk2(w.n,s.oi)])wdd++;});
   // Count validated split children too
-  splitChildren.forEach(sc=>{wt++;if(D.sess['schild_'+sk2(w.n,sc.parentOi)])wdd++;});
+  Object.values(splitByDay).flat().forEach(sp=>{wt++;if(D.sess['schild_'+sk2(w.n,sp.oi)])wdd++;});
   const wp=wt>0?Math.round(wdd/wt*100):0;
   const isd=wt>0&&wdd===wt;
   const nc=isd?'dn':ic?'cur':'';const nt=isd?'✓':w.n;
   const card=document.createElement('div');card.className='wc'+(ic?' cwk':'');
   const ORDERED_DAYS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
   const sl=allRows.map((s,pos)=>{
-    // Split child rendering
-    if(s.isSplitChild){
-      const doneCh=!!D.sess['schild_'+sk2(w.n,s.parentOi)];
-      const sessDate=sessionDate(w.n,pos);
-      const sessDateStr=fmtDateFull(sessDate);
-      const kmPill=s.k>0?'<div class="plan-row"><span class="plan-pill">'+s.k+' km</span></div>':'';
-      const noteHtml=s.dt?'<div class="sdt">'+s.dt+'</div>':'';
-      return '<div class="srow is-split" data-wn="'+w.n+'" data-oi="'+s.oi+'" data-splitparent="'+s.parentOi+'" data-locked="0" draggable="false">'
-        +'<div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div>'
-        +'<div class="ck'+(doneCh?' dn':'')+'" onclick="tgsChild('+w.n+','+s.parentOi+',this)"></div>'
-        +'<div class="si">'
-        +'<div class="sdy" style="color:var(--am);">'+sessDateStr+' ✂</div>'
-        +'<div class="sty">'+s.t+'</div>'
-        +noteHtml+kmPill
+    // Partie B : affichée sous le jour cible, pas comme ligne séparée
+    const splitsHere=splitByDay[pos]||[];
+    const splitSubHtml=splitsHere.map(sp=>{
+      const doneCh=!!D.sess['schild_'+sk2(w.n,sp.oi)];
+      const kmPill=sp.bKm>0?'<span class="plan-pill" style="margin-left:4px;">'+sp.bKm+' km</span>':'';
+      const noteHtml=sp.bNote?'<div class="sdt">'+sp.bNote+'</div>':'';
+      return '<div class="split-sub-row">'
+        +'<div class="ck'+(doneCh?' dn':'')+'" onclick="tgsChild('+w.n+','+sp.oi+',this)" style="width:18px;height:18px;flex-shrink:0;"></div>'
+        +'<div class="si" style="flex:1;min-width:0;">'
+        +'<div class="sdy" style="color:var(--am);font-size:.58rem;">✂ Partie B</div>'
+        +'<div class="sty" style="font-size:.72rem;">'+sp.bTitle+kmPill+'</div>'
+        +noteHtml
         +'</div>'
-        +'<button onclick="event.stopPropagation();deleteSplit('+w.n+','+s.parentOi+')" style="font-size:.58rem;padding:2px 7px;border-radius:7px;background:var(--rel);border:1px solid rgba(192,57,43,.2);color:var(--re);flex-shrink:0;">✕</button>'
+        +'<button onclick="event.stopPropagation();deleteSplit('+w.n+','+sp.oi+')" style="font-size:.58rem;padding:2px 6px;border-radius:6px;background:var(--rel);border:1px solid rgba(192,57,43,.2);color:var(--re);flex-shrink:0;">✕</button>'
         +'</div>';
-    }
+    }).join('');
     const done2=!!D.sess[sk2(w.n,s.oi)];
     const bl=s.b==='c'?'bc':s.b==='s'?'bs':s.b==='ra'?'bra':'br';
     const bt=s.b==='c'?'Course':s.b==='s'?'Salle':s.b==='ra'?'Race':'Repos';
@@ -903,7 +897,7 @@ function buildWeekCard(w,c,expanded){
     const splitKey='split_'+sk2(w.n,s.oi);
     const hasSplit=!!(D.splits&&D.splits[splitKey]);
     const splitBtn=(!done2&&s.b==='c')?'<button class="split-btn" onclick="event.stopPropagation();openSplit('+w.n+','+s.oi+')">'+(hasSplit?'✂ Fractionné':'✂ Fractionner')+'</button>':'';
-    return '<div class="srow'+(hasSplit?' is-split':'')+'" data-wn="'+w.n+'" data-oi="'+s.oi+'" data-locked="0" draggable="false"><div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div><div class="ck'+(done2?' dn':'')+'" onclick="tgs('+w.n+','+s.oi+',this)"></div><div class="si"><div class="sdy">'+sessDateStr+'</div><div class="sty">'+s.t+'</div>'+detailHtml+statsHtml+splitBtn+'</div><div class="bgb '+bl+'">'+bt+'</div></div>';
+    return '<div class="srow'+(hasSplit?' is-split':'')+'" data-wn="'+w.n+'" data-oi="'+s.oi+'" data-locked="0" draggable="false"><div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div><div class="ck'+(done2?' dn':'')+'" onclick="tgs('+w.n+','+s.oi+',this)"></div><div class="si"><div class="sdy">'+sessDateStr+'</div><div class="sty">'+s.t+'</div>'+detailHtml+statsHtml+splitBtn+splitSubHtml+'</div><div class="bgb '+bl+'">'+bt+'</div></div>';
   }).join('');
   const isOpen=expanded;
   const ws=D.weekStatus&&D.weekStatus[w.n]||{};
@@ -1030,15 +1024,7 @@ function initDrag(){
       const wn=parseInt(list.dataset.wn);const rows=[...list.querySelectorAll('.srow')];
       const si=rows.indexOf(ds),ti=rows.indexOf(tgt);rows.splice(si,1);rows.splice(ti,0,ds);
       rows.forEach(r=>list.appendChild(r));list.querySelectorAll('.srow').forEach(r=>r.classList.remove('dover'));
-      // Save base session order (skip split children from ord)
-      D.ord[wn]=rows.filter(r=>!r.dataset.splitparent).map(r=>parseInt(r.dataset.oi));
-      // Save split child positions
-      rows.forEach((r,i)=>{
-        if(r.dataset.splitparent!==undefined&&r.dataset.splitparent!==''){
-          const spk='split_'+sk2(wn,parseInt(r.dataset.splitparent));
-          if(D.splits&&D.splits[spk])D.splits[spk].bPos=i;
-        }
-      });
+      D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));
       sv(D);refreshDayLabels(list,wn);updateWeeklyWidget(curWeek());toast('Ordre sauvegardé');
     });
   });
@@ -1067,13 +1053,7 @@ function initDrag(){
           const wn=parseInt(list.dataset.wn);const rows=[...list.querySelectorAll('.srow')];
           const si=rows.indexOf(td),ti=rows.indexOf(tgt);rows.splice(si,1);rows.splice(ti,0,td);
           rows.forEach(r=>list.appendChild(r));
-          D.ord[wn]=rows.filter(r=>!r.dataset.splitparent).map(r=>parseInt(r.dataset.oi));
-          rows.forEach((r,i)=>{
-            if(r.dataset.splitparent!==undefined&&r.dataset.splitparent!==''){
-              const spk='split_'+sk2(wn,parseInt(r.dataset.splitparent));
-              if(D.splits&&D.splits[spk])D.splits[spk].bPos=i;
-            }
-          });
+          D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));
           sv(D);refreshDayLabels(list,wn);updateWeeklyWidget(curWeek());toast('Ordre sauvegardé');
         }
       }
@@ -1178,6 +1158,11 @@ function openSplit(wn,oi){
   document.getElementById('sp-a-title').value=existing?existing.aTitle:(s?s.t:'');
   document.getElementById('sp-a-km').value=existing?existing.aKm:(s&&s.k?s.k:'');
   document.getElementById('sp-a-note').value=existing?existing.aNote:'';
+  // Default target day = day after parent session
+  const w2=BW.find(x=>x.n===_spWn);
+  const parentPos=w2?w2.ss.findIndex(x=>x===s):0;
+  const defaultDay=existing&&existing.bDay!==undefined?existing.bDay:Math.min((parentPos+1),6);
+  document.getElementById('sp-b-day').value=existing?existing.bDay:defaultDay;
   document.getElementById('sp-b-title').value=existing?existing.bTitle:'';
   document.getElementById('sp-b-km').value=existing?existing.bKm:'';
   document.getElementById('sp-b-note').value=existing?existing.bNote:'';
@@ -1192,11 +1177,12 @@ function saveSplit(){
   const aTitle=document.getElementById('sp-a-title').value.trim();
   const aKm=parseFloat(document.getElementById('sp-a-km').value)||0;
   const aNote=document.getElementById('sp-a-note').value.trim();
+  const bDay=parseInt(document.getElementById('sp-b-day').value);
   const bTitle=document.getElementById('sp-b-title').value.trim();
   const bKm=parseFloat(document.getElementById('sp-b-km').value)||0;
   const bNote=document.getElementById('sp-b-note').value.trim();
   if(!bTitle){document.getElementById('sp-b-title').style.borderColor='var(--re)';return;}
-  D.splits['split_'+sk2(_spWn,_spOi)]={aTitle,aKm,aNote,bTitle,bKm,bNote,wn:_spWn,oi:_spOi};
+  D.splits['split_'+sk2(_spWn,_spOi)]={aTitle,aKm,aNote,bDay,bTitle,bKm,bNote,wn:_spWn,oi:_spOi};
   sv(D);closeSplit();rdash();
   toast('Séance fractionnée');
 }
