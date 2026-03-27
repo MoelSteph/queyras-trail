@@ -115,6 +115,19 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
 .sdy{font-size:.62rem;font-weight:500;color:var(--t2);letter-spacing:.02em;min-width:90px;}
 .sty{font-size:.77rem;color:var(--t);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .sdt{font-size:.68rem;color:var(--t3);margin-top:2px;line-height:1.4;white-space:normal;}
+.split-btn{font-size:.58rem;padding:2px 7px;border-radius:7px;background:var(--bg2);border:1px solid var(--b2);color:var(--t3);margin-top:4px;cursor:pointer;display:inline-block;}
+.split-btn:active{opacity:.7;}
+.split-modal{position:fixed;inset:0;background:rgba(44,31,14,0.65);z-index:500;display:flex;align-items:flex-end;}
+.split-sheet{background:var(--bg);border-radius:20px 20px 0 0;padding:22px 20px 36px;width:100%;max-height:85dvh;overflow-y:auto;}
+.split-sheet h3{font-family:var(--fd);font-size:1.05rem;color:var(--t);margin-bottom:6px;}
+.split-sub{font-size:.72rem;color:var(--t3);margin-bottom:16px;line-height:1.5;}
+.split-part{background:var(--bg2);border-radius:var(--r);padding:14px;margin-bottom:10px;}
+.split-part-title{font-size:.68rem;font-weight:500;color:var(--t2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;}
+.split-input{width:100%;background:var(--sf);border:1px solid var(--b2);border-radius:var(--rs);padding:8px 10px;font-family:var(--fb);font-size:.82rem;color:var(--t);outline:none;margin-bottom:6px;}
+.split-input:focus{border-color:var(--or);}
+.split-save{width:100%;background:var(--or);color:#fff;padding:12px;border-radius:var(--rs);font-size:.84rem;font-weight:500;margin-top:10px;}
+.split-cancel{width:100%;background:var(--bg2);border:1px solid var(--b2);color:var(--t2);padding:11px;border-radius:var(--rs);font-size:.82rem;margin-top:8px;}
+.srow.is-split{border-left:2px solid var(--am);}
 .bgb{font-size:.58rem;padding:3px 8px;border-radius:9px;font-weight:500;flex-shrink:0;}
 .bc{background:var(--orll);color:#854F0B;}
 .bs{background:var(--bll);color:#0C447C;}
@@ -281,7 +294,10 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
       <div class="strava-info-t" id="strava-info-t">Connecter Strava</div>
       <div class="strava-info-s" id="strava-info-s">Synchronise tes activités automatiquement</div>
     </div>
-    <button class="strava-btn" id="strava-action-btn" onclick="stravaAction()">Connecter</button>
+    <div style="display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;">
+      <button class="strava-btn" id="strava-action-btn" onclick="stravaAction()">Connecter</button>
+      <button class="strava-sync" id="strava-force-btn" style="display:none;" onclick="forceReconnect()">Reconnecter</button>
+    </div>
   </div>
 
   <div class="sr">
@@ -375,6 +391,26 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
 </nav>
 </div>
 <div class="toast" id="toast"></div>
+<div class="split-modal" id="split-modal" style="display:none" onclick="if(event.target===this)closeSplit()">
+  <div class="split-sheet">
+    <h3>Fractionner la séance</h3>
+    <p class="split-sub">Divise cette séance en deux parties pour étaler la charge.<br>La partie A garde la séance originale, la partie B est ajoutée dessous.</p>
+    <div class="split-part">
+      <div class="split-part-title">Partie A — originale</div>
+      <input class="split-input" id="sp-a-title" placeholder="Titre (ex: Fractionné court)"/>
+      <input class="split-input" id="sp-a-km" type="number" placeholder="km prévus" min="0" step="0.5"/>
+      <input class="split-input" id="sp-a-note" placeholder="Note (optionnel)"/>
+    </div>
+    <div class="split-part">
+      <div class="split-part-title">Partie B — ajoutée</div>
+      <input class="split-input" id="sp-b-title" placeholder="Titre (ex: Footing récup)"/>
+      <input class="split-input" id="sp-b-km" type="number" placeholder="km prévus" min="0" step="0.5"/>
+      <input class="split-input" id="sp-b-note" placeholder="Note (optionnel)"/>
+    </div>
+    <button class="split-save" onclick="saveSplit()">Enregistrer le fractionnement</button>
+    <button class="split-cancel" onclick="closeSplit()">Annuler</button>
+  </div>
+</div>
 <div class="status-modal" id="status-modal" style="display:none" onclick="if(event.target===this)closeStatusModal()">
   <div class="status-sheet">
     <h3>Semaine <span id="sm-wnum">—</span> · Statut</h3>
@@ -439,6 +475,7 @@ if(!D.pain)D.pain={hanche:-1,genou:-1};
 if(!D.ord)D.ord={};
 if(!D.strava)D.strava={token:null,refresh:null,expires:0,acts:[]};
 if(!D.stravaAuto)D.stravaAuto={};
+if(!D.splits)D.splits={};
 if(!D.weekStatus)D.weekStatus={};
 
 function daysLeft(){return Math.max(0,Math.ceil((RACE-new Date())/86400000));}
@@ -505,6 +542,13 @@ async function submitStravaCode(){
       toast('Code invalide — réessaie');
     }
   }catch(e){toast('Erreur de connexion');}
+}
+
+function forceReconnect(){
+  // Clear token but keep acts cache, then reconnect
+  D.strava.token=null;D.strava.refresh=null;D.strava.expires=0;sv(D);
+  updateStravaBanner();
+  setTimeout(()=>stravaAction(),300);
 }
 
 function disconnectStrava(){
@@ -708,12 +752,14 @@ function updateStravaBanner(){
     t.textContent='Strava connecté — '+D.strava.acts.length+' activité'+(D.strava.acts.length>1?'s':'');
     const ls=D.strava.lastSync?new Date(D.strava.lastSync).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}):'jamais';
     s.textContent='Dernière sync : '+ls;
-    btn.className='strava-sync';btn.textContent='Sync';
+    btn.className='strava-sync';btn.textContent='Sync';btn.style.display='';
+    const fb=document.getElementById('strava-force-btn');if(fb)fb.style.display='';
   }else{
     banner.classList.remove('connected');
     t.textContent='Connecter Strava';
     s.textContent='Synchronise tes activités automatiquement';
-    btn.className='strava-btn';btn.textContent='Connecter';
+    btn.className='strava-btn';btn.textContent='Connecter';btn.style.display='';
+    const fb2=document.getElementById('strava-force-btn');if(fb2)fb2.style.display='none';
   }
 }
 
@@ -769,25 +815,72 @@ function gst(){
 }
 
 function buildWeekCard(w,c,expanded){
+  // Build augmented session list: base sessions + split children injected at their stored position
   const ss=gws(w.n);
+  // Collect split children for this week
+  const splitChildren=[];
+  if(D.splits){
+    Object.keys(D.splits).forEach(k=>{
+      if(!k.startsWith('split_'))return;
+      const sp=D.splits[k];
+      if(sp.wn!==w.n)return;
+      // synthetic session object for Part B
+      splitChildren.push({
+        isSplitChild:true,
+        parentOi:sp.oi,
+        splitKey:k,
+        t:sp.bTitle,dt:sp.bNote||'',k:sp.bKm||0,e:0,b:'c',
+        oi:'c'+sp.oi, // unique oi string
+        pos:sp.bPos!==undefined?sp.bPos:ss.findIndex(x=>x.oi===sp.oi)+1,
+      });
+    });
+  }
+  // Merge and sort by position
+  const allRows=[];
+  ss.forEach((s,i)=>allRows.push({...s,_baseIdx:i,isSplitChild:false}));
+  splitChildren.forEach(sc=>{
+    const insertAt=Math.min(Math.max(0,sc.pos),allRows.length);
+    allRows.splice(insertAt,0,sc);
+  });
+  // Recalculate positions after merge
+  allRows.forEach((s,i)=>s._pos=i);
+
   const ic=w.n===c;
   let wdd=0,wt=0;ss.forEach(s=>{if(s.b==='r')return;wt++;if(D.sess[sk2(w.n,s.oi)])wdd++;});
+  // Count validated split children too
+  splitChildren.forEach(sc=>{wt++;if(D.sess['schild_'+sk2(w.n,sc.parentOi)])wdd++;});
   const wp=wt>0?Math.round(wdd/wt*100):0;
   const isd=wt>0&&wdd===wt;
   const nc=isd?'dn':ic?'cur':'';const nt=isd?'✓':w.n;
   const card=document.createElement('div');card.className='wc'+(ic?' cwk':'');
   const ORDERED_DAYS=['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
-  const sl=ss.map((s,pos)=>{
+  const sl=allRows.map((s,pos)=>{
+    // Split child rendering
+    if(s.isSplitChild){
+      const doneCh=!!D.sess['schild_'+sk2(w.n,s.parentOi)];
+      const sessDate=sessionDate(w.n,pos);
+      const sessDateStr=fmtDateFull(sessDate);
+      const kmPill=s.k>0?'<div class="plan-row"><span class="plan-pill">'+s.k+' km</span></div>':'';
+      const noteHtml=s.dt?'<div class="sdt">'+s.dt+'</div>':'';
+      return '<div class="srow is-split" data-wn="'+w.n+'" data-oi="'+s.oi+'" data-splitparent="'+s.parentOi+'" data-locked="0" draggable="false">'
+        +'<div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div>'
+        +'<div class="ck'+(doneCh?' dn':'')+'" onclick="tgsChild('+w.n+','+s.parentOi+',this)"></div>'
+        +'<div class="si">'
+        +'<div class="sdy" style="color:var(--am);">'+sessDateStr+' ✂</div>'
+        +'<div class="sty">'+s.t+'</div>'
+        +noteHtml+kmPill
+        +'</div>'
+        +'<button onclick="event.stopPropagation();deleteSplit('+w.n+','+s.parentOi+')" style="font-size:.58rem;padding:2px 7px;border-radius:7px;background:var(--rel);border:1px solid rgba(192,57,43,.2);color:var(--re);flex-shrink:0;">✕</button>'
+        +'</div>';
+    }
     const done2=!!D.sess[sk2(w.n,s.oi)];
     const bl=s.b==='c'?'bc':s.b==='s'?'bs':s.b==='ra'?'bra':'br';
     const bt=s.b==='c'?'Course':s.b==='s'?'Salle':s.b==='ra'?'Race':'Repos';
     const key=sk2(w.n,s.oi);
     const sm=D.stravaMatch&&D.stravaMatch[key];
-    const displayDay=ORDERED_DAYS[pos]||s.d;
     const sessDate=sessionDate(w.n,pos);
     const sessDateStr=fmtDateFull(sessDate);
     const trailBadge=sm&&sm.trail?'<span class="strava-pill" style="background:#e8f2fb;color:#0C447C;border:1px solid rgba(12,68,124,.15);">🏔 Trail</span>':'';
-    // ── Stats block : prévu + réalisé ──
     let statsHtml='';
     if(s.b==='c'||s.b==='ra'){
       const hasPlanned=s.k>0||(s.e||0)>0;
@@ -800,18 +893,17 @@ function buildWeekCard(w,c,expanded){
           +'<span class="plan-pill real-km">'+fmtKm(sm.km)+'</span>'
           +(sm.elev>0?'<span class="plan-pill real-elev">+'+Math.round(sm.elev)+' m</span>':'')
           +'<span class="plan-pill real-dur">'+fmtDur(sm.dur)+'</span>'
-          +trailBadge
-          +'</div>';
+          +trailBadge+'</div>';
       }
       if(plannedPills||donePills)statsHtml='<div class="stats-block">'+plannedPills+donePills+'</div>';
     } else if(s.b==='s'&&sm&&sm.gym){
       statsHtml='<div class="stats-block"><div class="stats-row"><span class="stats-lbl">Réalisé</span><span class="plan-pill real-dur">'+fmtDur(sm.dur)+'</span><span class="plan-pill" style="background:var(--aml);color:#633806;">🏋 Salle</span></div></div>';
     }
-    let stravaHtml=''; // kept for compat but now empty — stats shown above
-    let plannedHtml=''; // same
     const detailHtml=s.dt&&s.b!=='r'?'<div class="sdt">'+s.dt+'</div>':'';
-    const locked='0'; // Toutes les séances sont toujours réagençables
-    return '<div class="srow" data-wn="'+w.n+'" data-oi="'+s.oi+'" data-locked="'+locked+'" draggable="false"><div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div><div class="ck'+(done2?' dn':'')+'" onclick="tgs('+w.n+','+s.oi+',this)"></div><div class="si"><div class="sdy">'+sessDateStr+'</div><div class="sty">'+s.t+'</div>'+detailHtml+statsHtml+'</div><div class="bgb '+bl+'">'+bt+'</div></div>';
+    const splitKey='split_'+sk2(w.n,s.oi);
+    const hasSplit=!!(D.splits&&D.splits[splitKey]);
+    const splitBtn=(!done2&&s.b==='c')?'<button class="split-btn" onclick="event.stopPropagation();openSplit('+w.n+','+s.oi+')">'+(hasSplit?'✂ Fractionné':'✂ Fractionner')+'</button>':'';
+    return '<div class="srow'+(hasSplit?' is-split':'')+'" data-wn="'+w.n+'" data-oi="'+s.oi+'" data-locked="0" draggable="false"><div class="dh" data-wn="'+w.n+'"><span></span><span></span><span></span></div><div class="ck'+(done2?' dn':'')+'" onclick="tgs('+w.n+','+s.oi+',this)"></div><div class="si"><div class="sdy">'+sessDateStr+'</div><div class="sty">'+s.t+'</div>'+detailHtml+statsHtml+splitBtn+'</div><div class="bgb '+bl+'">'+bt+'</div></div>';
   }).join('');
   const isOpen=expanded;
   const ws=D.weekStatus&&D.weekStatus[w.n]||{};
@@ -938,7 +1030,16 @@ function initDrag(){
       const wn=parseInt(list.dataset.wn);const rows=[...list.querySelectorAll('.srow')];
       const si=rows.indexOf(ds),ti=rows.indexOf(tgt);rows.splice(si,1);rows.splice(ti,0,ds);
       rows.forEach(r=>list.appendChild(r));list.querySelectorAll('.srow').forEach(r=>r.classList.remove('dover'));
-      D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));sv(D);refreshDayLabels(list,wn);updateWeeklyWidget(curWeek());toast('Ordre sauvegardé');
+      // Save base session order (skip split children from ord)
+      D.ord[wn]=rows.filter(r=>!r.dataset.splitparent).map(r=>parseInt(r.dataset.oi));
+      // Save split child positions
+      rows.forEach((r,i)=>{
+        if(r.dataset.splitparent!==undefined&&r.dataset.splitparent!==''){
+          const spk='split_'+sk2(wn,parseInt(r.dataset.splitparent));
+          if(D.splits&&D.splits[spk])D.splits[spk].bPos=i;
+        }
+      });
+      sv(D);refreshDayLabels(list,wn);updateWeeklyWidget(curWeek());toast('Ordre sauvegardé');
     });
   });
   document.querySelectorAll('.sl2').forEach(list=>{
@@ -965,7 +1066,15 @@ function initDrag(){
         else{
           const wn=parseInt(list.dataset.wn);const rows=[...list.querySelectorAll('.srow')];
           const si=rows.indexOf(td),ti=rows.indexOf(tgt);rows.splice(si,1);rows.splice(ti,0,td);
-          rows.forEach(r=>list.appendChild(r));D.ord[wn]=rows.map(r=>parseInt(r.dataset.oi));sv(D);refreshDayLabels(list,wn);updateWeeklyWidget(curWeek());toast('Ordre sauvegardé');
+          rows.forEach(r=>list.appendChild(r));
+          D.ord[wn]=rows.filter(r=>!r.dataset.splitparent).map(r=>parseInt(r.dataset.oi));
+          rows.forEach((r,i)=>{
+            if(r.dataset.splitparent!==undefined&&r.dataset.splitparent!==''){
+              const spk='split_'+sk2(wn,parseInt(r.dataset.splitparent));
+              if(D.splits&&D.splits[spk])D.splits[spk].bPos=i;
+            }
+          });
+          sv(D);refreshDayLabels(list,wn);updateWeeklyWidget(curWeek());toast('Ordre sauvegardé');
         }
       }
       td=null;
@@ -1054,6 +1163,56 @@ function saveStatus(){
   D.weekStatus[_smWn]=ws;
   sv(D);closeStatusModal();rdash();
   toast('Statut semaine '+_smWn+' enregistré');
+}
+
+// ── SPLIT SESSION ──
+if(!D.splits)D.splits={};
+
+let _spWn=null,_spOi=null;
+
+function openSplit(wn,oi){
+  _spWn=wn;_spOi=oi;
+  const w=BW.find(x=>x.n===wn);
+  const s=w&&w.ss[oi];
+  const existing=D.splits&&D.splits['split_'+sk2(wn,oi)];
+  document.getElementById('sp-a-title').value=existing?existing.aTitle:(s?s.t:'');
+  document.getElementById('sp-a-km').value=existing?existing.aKm:(s&&s.k?s.k:'');
+  document.getElementById('sp-a-note').value=existing?existing.aNote:'';
+  document.getElementById('sp-b-title').value=existing?existing.bTitle:'';
+  document.getElementById('sp-b-km').value=existing?existing.bKm:'';
+  document.getElementById('sp-b-note').value=existing?existing.bNote:'';
+  document.getElementById('split-modal').style.display='flex';
+}
+
+function closeSplit(){document.getElementById('split-modal').style.display='none';_spWn=null;_spOi=null;}
+
+function saveSplit(){
+  if(_spWn===null)return;
+  if(!D.splits)D.splits={};
+  const aTitle=document.getElementById('sp-a-title').value.trim();
+  const aKm=parseFloat(document.getElementById('sp-a-km').value)||0;
+  const aNote=document.getElementById('sp-a-note').value.trim();
+  const bTitle=document.getElementById('sp-b-title').value.trim();
+  const bKm=parseFloat(document.getElementById('sp-b-km').value)||0;
+  const bNote=document.getElementById('sp-b-note').value.trim();
+  if(!bTitle){document.getElementById('sp-b-title').style.borderColor='var(--re)';return;}
+  D.splits['split_'+sk2(_spWn,_spOi)]={aTitle,aKm,aNote,bTitle,bKm,bNote,wn:_spWn,oi:_spOi};
+  sv(D);closeSplit();rdash();
+  toast('Séance fractionnée');
+}
+
+function deleteSplit(wn,oi){
+  if(D.splits){delete D.splits['split_'+sk2(wn,oi)];}
+  sv(D);rdash();toast('Fractionnement supprimé');
+}
+
+// renderSplitChild removed — split children now injected directly in allRows
+
+function tgsChild(wn,oi,el){
+  const key='schild_'+sk2(wn,oi);
+  D.sess[key]=!D.sess[key];if(!D.sess[key])delete D.sess[key];sv(D);
+  el.classList.toggle('dn',!!D.sess[key]);
+  if(D.sess[key])toast('Séance B validée ✓');
 }
 
 // Init
