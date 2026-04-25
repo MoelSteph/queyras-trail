@@ -239,6 +239,35 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
 .act-dur{background:var(--bg2);color:var(--t2);}
 .act-date{font-size:.6rem;color:var(--t3);margin-top:5px;}
 
+.ntab{padding:14px 20px 32px;}
+.ntab h2{font-family:var(--fd);font-size:1.1rem;color:var(--t);margin-bottom:4px;font-style:italic;}
+.ntab .sub{font-size:.72rem;color:var(--t3);margin-bottom:14px;line-height:1.5;}
+.ncard{background:var(--sf);border:1px solid var(--b1);border-radius:var(--r);padding:14px 15px;margin-bottom:10px;}
+.ncard-title{font-size:.65rem;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:var(--t3);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.ncard-title span{font-size:1rem;}
+.ntable{width:100%;border-collapse:collapse;}
+.ntable th{font-size:.65rem;font-weight:500;color:var(--t3);text-transform:uppercase;letter-spacing:.04em;padding:5px 8px;border-bottom:1px solid var(--b2);text-align:left;}
+.ntable td{font-size:.75rem;color:var(--t);padding:7px 8px;border-bottom:1px solid var(--b1);vertical-align:top;line-height:1.4;}
+.ntable tr:last-child td{border-bottom:none;}
+.ntable td.key{color:var(--or);font-weight:500;}
+.ntable td.val{color:var(--bl);font-weight:500;}
+.ntable td.note{color:var(--t3);font-size:.68rem;}
+.nrow-key{background:var(--orll);}
+.nalert{background:var(--rel);border:1px solid rgba(192,57,43,.25);border-radius:var(--r);padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--re);}
+.nalert-t{font-size:.72rem;font-weight:500;color:var(--re);margin-bottom:3px;}
+.nalert-b{font-size:.72rem;color:#7f1d1d;line-height:1.5;}
+.ntip{background:var(--grl);border:1px solid rgba(46,125,50,.2);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;}
+.ntip-t{font-size:.68rem;font-weight:500;color:var(--gr);margin-bottom:3px;}
+.ntip-b{font-size:.72rem;color:#1b5e20;line-height:1.5;}
+.nweek-card{background:var(--sf);border:1px solid var(--b1);border-radius:var(--r);padding:13px 15px;margin-bottom:9px;}
+.nday{display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid var(--b1);}
+.nday:last-child{border-bottom:none;}
+.nday-lbl{font-size:.65rem;font-weight:500;color:var(--or);min-width:30px;}
+.nday-txt{font-size:.72rem;color:var(--t2);line-height:1.5;flex:1;}
+.ntag{display:inline-block;font-size:.58rem;padding:2px 7px;border-radius:8px;font-weight:500;margin-left:4px;vertical-align:middle;}
+.ntag-c{background:var(--orll);color:#854F0B;}
+.ntag-p{background:var(--grl);color:var(--gr);}
+.ntag-g{background:var(--bll);color:var(--bl);}
 .toast{position:fixed;bottom:calc(65px + var(--sb));left:50%;transform:translateX(-50%) translateY(16px);background:var(--or);color:#fff;font-size:.78rem;font-weight:500;padding:9px 18px;border-radius:20px;opacity:0;transition:all .28s;z-index:200;pointer-events:none;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .spin{display:inline-block;animation:spin .8s linear infinite;}
@@ -361,9 +390,9 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
     <div class="phb">
       <div style="font-size:.65rem;color:var(--t3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:9px">Phases</div>
       <div class="phr"><div class="phd" style="background:var(--bl)"></div><div class="phn">Phase 1 · Base aérobie</div><div class="phw">S1–S4</div><div class="phbg" id="ph1s" style="background:var(--bll);color:#0C447C">—</div></div>
-      <div class="phr"><div class="phd" style="background:var(--or)"></div><div class="phn">Phase 2 · Trail spécifique</div><div class="phw">S5–S10</div><div class="phbg" id="ph2s" style="background:var(--orll);color:#854F0B">—</div></div>
-      <div class="phr"><div class="phd" style="background:var(--am)"></div><div class="phn">Phase 3 · Pic de forme</div><div class="phw">S11–S14</div><div class="phbg" id="ph3s" style="background:var(--aml);color:#633806">—</div></div>
-      <div class="phr"><div class="phd" style="background:var(--re)"></div><div class="phn">Phase 4 · Affûtage</div><div class="phw">S15–S17</div><div class="phbg" id="ph4s" style="background:var(--rel);color:#7f1d1d">—</div></div>
+      <div class="phr"><div class="phd" style="background:var(--or)"></div><div class="phn">Phase 2 · Développement trail</div><div class="phw">S5–S9</div><div class="phbg" id="ph2s" style="background:var(--orll);color:#854F0B">—</div></div>
+      <div class="phr"><div class="phd" style="background:var(--am)"></div><div class="phn">Phase 3 · Trail spécifique</div><div class="phw">S10–S15</div><div class="phbg" id="ph3s" style="background:var(--aml);color:#633806">—</div></div>
+      <div class="phr"><div class="phd" style="background:var(--re)"></div><div class="phn">Phase 4 · Affûtage</div><div class="phw">S16–S19</div><div class="phbg" id="ph4s" style="background:var(--rel);color:#7f1d1d">—</div></div>
     </div>
     <div class="sh" style="padding:0 0 10px"><h2>Activités Strava récentes</h2></div>
     <div id="strava-acts"><div class="ne">Connecte Strava pour voir tes activités</div></div>
@@ -371,6 +400,61 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
   </div>
 </section>
 
+
+<!-- NUTRITION -->
+<section class="sec" id="sec-nutri">
+<div class="ntab">
+  <h2>Nutrition & Alimentation</h2>
+  <p class="sub">Stratégie calibrée trail · Perte de gras en cours · Déficit léger semaine, liberté week-end</p>
+
+  <div class="nalert">
+    <div class="nalert-t">⚠ Diagnostic FC S1–S9</div>
+    <div class="nalert-b">64% des séances courues au-dessus de Z2 (FC moy ≥147 bpm). Footings EF trop rapides → fatigue accumulée → récupération insuffisante. Cible : 135–142 bpm FC moy sur tous les footings "faciles".</div>
+  </div>
+
+  <div class="ncard">
+    <div class="ncard-title"><span>🎯</span>Macros cibles par type de jour</div>
+    <table class="ntable">
+      <tr><th>Type de jour</th><th>Calories</th><th>Prot.</th><th>Glucides</th></tr>
+      <tr><td class="key">Repos / Salle</td><td class="val">~2 000 kcal</td><td>160g</td><td>170–190g</td></tr>
+      <tr><td class="key">EF Z2 &lt;1h15</td><td class="val">~2 200 kcal</td><td>155g</td><td>200–220g</td></tr>
+      <tr class="nrow-key"><td class="key">Funiculaire (Mar)</td><td class="val">~2 400 kcal</td><td>160g</td><td>240–260g</td></tr>
+      <tr class="nrow-key"><td class="key">Sortie longue &gt;2h (Sam)</td><td class="val">~2 600 kcal</td><td>155g</td><td>280–320g</td></tr>
+      <tr><td class="key">WE choc Chamonix</td><td class="val">~3 000 kcal</td><td>160g</td><td>350–380g</td></tr>
+      <tr><td class="key">WE plaisir</td><td class="val">Libre</td><td>130g min</td><td>—</td></tr>
+    </table>
+  </div>
+
+  <div class="ncard">
+    <div class="ncard-title"><span>⏱</span>Timing nutritionnel — séances clés</div>
+    <div class="nday"><div class="nday-lbl">Mar</div><div class="nday-txt"><strong>Funiculaire</strong> — Avant : avoine + banane + café (60–80g carbs, 1h30 avant). Après : 30g protéines + fruit dans les 30min.</div></div>
+    <div class="nday"><div class="nday-lbl">Sam</div><div class="nday-txt"><strong>Longue</strong> — Riz ou pâtes la veille soir. Petit-déj complet 1h30 avant. Pendant : 1 gel ou 4 dattes toutes les 45min sur sorties &gt;1h30.</div></div>
+    <div class="nday"><div class="nday-lbl">Chamo</div><div class="nday-txt"><strong>WE choc S16</strong> — Charge glucidique Jeu/Ven/Sam avant (400–500g carbs/j). Gel toutes les 45min. Repas protéiné immédiat post-sortie.</div></div>
+    <div class="nday"><div class="nday-lbl">Course</div><div class="nday-txt"><strong>4 juillet</strong> — 500g pâtes ven soir. Riz + banane sam matin (3h avant départ). Gel toutes les 45min. Coca/cola en 2e moitié si disponible.</div></div>
+  </div>
+
+  <div class="ncard">
+    <div class="ncard-title"><span>📅</span>Guide nutrition semaine type</div>
+    <div class="nday"><div class="nday-lbl">Lun</div><div class="nday-txt">Repos — déficit léger. Repas légers et protéinés. Pas de féculent en excès. <span class="ntag ntag-p">–200 kcal</span></div></div>
+    <div class="nday"><div class="nday-lbl">Mar</div><div class="nday-txt">Funiculaire — glucides ↑↑. Petit-déj solide. Déjeuner normal. Collation post : 30g prot. <span class="ntag ntag-g">+400 kcal</span></div></div>
+    <div class="nday"><div class="nday-lbl">Mer</div><div class="nday-txt">Salle jambes — léger excédent glucides. Repas post-salle avec protéines + féculent. <span class="ntag ntag-p">équilibre</span></div></div>
+    <div class="nday"><div class="nday-lbl">Jeu</div><div class="nday-txt">EF Z2 — normal, légèrement positif glucides. Ne pas sous-manger si sortie &gt;1h. <span class="ntag ntag-p">équilibre</span></div></div>
+    <div class="nday"><div class="nday-lbl">Ven</div><div class="nday-txt">Salle haut corps — repas léger suffisant. Avant Chamonix (S15) : début charge glucidique. <span class="ntag ntag-p">–150 kcal</span></div></div>
+    <div class="nday"><div class="nday-lbl">Sam</div><div class="nday-txt">Sortie longue — glucides ↑↑ + ravitaillement pendant. Repas complet après. Plaisir autorisé le soir. <span class="ntag ntag-g">+600 kcal</span></div></div>
+    <div class="nday"><div class="nday-lbl">Dim</div><div class="nday-txt">EF léger + récup — plaisir du week-end maintenu. Repas copieux OK. Retour déficit lundi. <span class="ntag ntag-c">plaisir</span></div></div>
+  </div>
+
+  <div class="ntip">
+    <div class="ntip-t">💊 Supplémentation recommandée</div>
+    <div class="ntip-b">Magnésium bisglycinate (350mg soir) — crampes + récupération. Vitamine D3 (1000 UI/j). Oméga-3 (1–2g/j, anti-inflammatoire). Protéines en poudre si difficile d'atteindre 155g/j via alimentation.</div>
+  </div>
+
+  <div class="ntip">
+    <div class="ntip-t">🧑‍⚕️ Spécifique pharmacien debout 35h/sem</div>
+    <div class="ntip-b">Position debout = +150–200 kcal/j vs travail assis. Compenser légèrement les jours de travail long. Hydratation difficile en officine : minimum 2L/j, 3L les jours d'entraînement. Collation milieu de matinée recommandée si séance prévue en soirée.</div>
+  </div>
+</div>
+</section>
 </main>
 <nav id="nav">
   <button class="nb active" data-s="dash">
@@ -388,6 +472,10 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
   <button class="nb" data-s="stats">
     <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
     Stats
+  </button>
+  <button class="nb" data-s="nutri">
+    <svg class="ni" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+    Nutrition
   </button>
 </nav>
 </div>
@@ -436,7 +524,7 @@ button{border:none;cursor:pointer;font-family:var(--fb);background:none;color:in
 </div>
 
 <script>
-const RACE=new Date('2026-07-04T07:00:00');
+const RACE=new Date('2026-07-04T06:00:00');
 const START=new Date('2026-02-23T00:00:00');
 const TOTAL=Math.round((RACE-START)/86400000);
 const MONTHS_FR=['jan','fév','mar','avr','mai','jun','jul','aoû','sep','oct','nov','déc'];
@@ -457,23 +545,177 @@ const REDIRECT='https://stupendous-cocada-62e7d6.netlify.app/callback.html';
 const TOKEN_FN='/.netlify/functions/strava-token';
 
 const BW=[
-  {n:1,ph:'Phase 1',lb:'Base aérobie',km:42,ss:[{d:'Lun',t:'Repos',dt:'Récupération + exercices kiné',b:'r',k:0},{d:'Mar',t:'Course · Footing Z2',dt:'Footing Z2 plat + 6×100m côtes',b:'c',k:10,e:80},{d:'Mer',t:'Salle A · Jambes',dt:'Renforcement jambes + circuit haut',b:'s',k:0},{d:'Jeu',t:'Course · Z2 + côtes',dt:'Footing Z2 + 6×100m montées',b:'c',k:10,e:80},{d:'Ven',t:'Salle B · Haut corps',dt:'Circuit haut + rappel jambes',b:'s',k:0},{d:'Sam',t:'Course · Sortie longue',dt:'Sortie longue Z1/Z2 – bois',b:'c',k:22,e:150},{d:'Dim',t:'Repos',dt:'Repos ou marche 30 min',b:'r',k:0}]},
-  {n:2,ph:'Phase 1',lb:'Base aérobie',km:45,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Côtes/tapis',dt:'Footing + 8×100m tapis incliné 10%',b:'c',k:11,e:100},{d:'Mer',t:'Salle A · Jambes',dt:'Renforcement jambes + circuit haut',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 aisé',b:'c',k:10,e:80},{d:'Ven',t:'Salle B · Haut corps',dt:'Circuit haut + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Sortie longue',dt:'Sortie longue Z1/Z2 – 2h30',b:'c',k:24,e:200},{d:'Dim',t:'Repos',dt:'Repos ou marche 40 min',b:'r',k:0}]},
-  {n:3,ph:'Phase 1',lb:'Base aérobie',km:48,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Z2 + côtes',dt:'Footing + 10×100m côtes',b:'c',k:12,e:120},{d:'Mer',t:'Salle A · Jambes',dt:'Renforcement jambes + circuit haut',b:'s',k:0},{d:'Jeu',t:'Course · Z2 + strides',dt:'Footing Z2 + 5×80m strides',b:'c',k:11,e:100},{d:'Ven',t:'Salle B · Complet',dt:'Circuit complet + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Sortie longue',dt:'Sortie longue Z1/Z2 + 45 min Z3',b:'c',k:25,e:250},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
-  {n:4,ph:'Phase 1',lb:'Récupération',km:32,ss:[{d:'Lun',t:'Repos',dt:'Repos + bilan kiné',b:'r',k:0},{d:'Mar',t:'Course · Z1 léger',dt:'Footing Z1 très léger',b:'c',k:8,e:60},{d:'Mer',t:'Salle A · Léger',dt:'Renforcement léger + mobilité',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 aisé',b:'c',k:10},{d:'Ven',t:'Salle B · Léger',dt:'Haut corps + étirements',b:'s',k:0},{d:'Sam',t:'Course · Sortie',dt:'Sortie longue modérée Z1/Z2',b:'c',k:14,e:150},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
-  {n:5,ph:'Phase 2',lb:'Trail spécifique',km:48,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Fractionné',dt:'3×8 min montée Z3/Z4 – escaliers',b:'c',k:11,e:200},{d:'Mer',t:'Salle A · Trail',dt:'Step-up, fentes lestées, mollets',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 récupérateur',b:'c',k:12,e:150},{d:'Ven',t:'Salle B · Haut corps',dt:'Circuit haut + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Trail long',dt:'Fontainebleau / Chevreuse – 2h45',b:'c',k:25,e:400},{d:'Dim',t:'Repos',dt:'Repos ou marche 45 min',b:'r',k:0}]},
-  {n:6,ph:'Phase 2',lb:'Trail spécifique',km:52,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Fractionné',dt:'4×8 min + 2×4 min Z4',b:'c',k:12,e:250},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement trail + circuit haut',b:'s',k:0},{d:'Jeu',t:'Course · Z2/Z3',dt:'Footing Z2 + 2×15 min Z3',b:'c',k:13,e:150},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Trail long',dt:'Fontainebleau / Vexin – 3h15',b:'c',k:27,e:500},{d:'Dim',t:'Repos',dt:'Repos ou marche 45 min',b:'r',k:0}]},
-  {n:7,ph:'Phase 2',lb:'Trail spécifique',km:50,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Côtes',dt:'Footing Z2 + 5×200m côtes Z4',b:'c',k:12,e:300},{d:'Mer',t:'Salle A · Trail',dt:'Single-leg DL, box jump, mollets',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 + marche 15 min finale',b:'c',k:11,e:100},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Bâtons',dt:'Sortie Z1/Z2 initiation bâtons – 3h',b:'c',k:27,e:550},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
-  {n:8,ph:'Phase 2',lb:'Récupération',km:34,ss:[{d:'Lun',t:'Repos',dt:'Repos + bilan kiné',b:'r',k:0},{d:'Mar',t:'Course · Z1',dt:'Footing Z1 très léger',b:'c',k:9,e:80},{d:'Mer',t:'Salle A · Léger',dt:'Renforcement léger + mobilité',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 aisé',b:'c',k:11,e:150},{d:'Ven',t:'Salle B · Léger',dt:'Haut corps + étirements',b:'s',k:0},{d:'Sam',t:'Course · Sortie',dt:'Sortie longue tranquille Z1/Z2',b:'c',k:14,e:200},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
-  {n:9,ph:'Phase 2',lb:'Trail spécifique',km:55,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Escaliers',dt:'5×10 min Z3/Z4 – escaliers',b:'c',k:13,e:350},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement trail complet',b:'s',k:0},{d:'Jeu',t:'Course · Z2/Z3',dt:'Footing Z2 + 2×20 min Z3',b:'c',k:14,e:150},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Grande sortie',dt:'Fontainebleau / montagne – 3h30',b:'c',k:28,e:650},{d:'Dim',t:'Repos',dt:'Marche 1h avec bâtons',b:'r',k:0}]},
-  {n:10,ph:'Phase 2',lb:'Trail spécifique',km:58,ss:[{d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0},{d:'Mar',t:'Course · Côtes',dt:'6×3 min Z4 (côte 6–8%)',b:'c',k:13,e:400},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement trail (charge prog.)',b:'s',k:0},{d:'Jeu',t:'Course · Z2/Z3',dt:'Footing Z2 + 30 min Z3',b:'c',k:15,e:200},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Montagne',dt:'Trail montagne bâtons – 3h45',b:'c',k:30,e:750},{d:'Dim',t:'Repos',dt:'Marche 1h active',b:'r',k:0}]},
-  {n:11,ph:'Phase 3',lb:'Pic de forme',km:60,ss:[{d:'Lun',t:'Repos',dt:'Repos + kiné',b:'r',k:0},{d:'Mar',t:'Course · Qualité',dt:'3×(2km Z3 + 1km Z4) tapis incliné',b:'c',k:14,e:300},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement trail complet',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 récupérateur',b:'c',k:12},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · CLÉ',dt:'Chartreuse / Belledonne – 4h30',b:'c',k:34,e:1200},{d:'Dim',t:'Repos',dt:'Marche 1h bâtons',b:'r',k:0}]},
-  {n:12,ph:'Phase 3',lb:'Pic de forme',km:62,ss:[{d:'Lun',t:'Repos',dt:'Repos + kiné',b:'r',k:0},{d:'Mar',t:'Course · Escaliers',dt:'4×12 min Z3/Z4, récup 3 min',b:'c',k:14,e:400},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement trail (charge maintenue)',b:'s',k:0},{d:'Jeu',t:'Course · Z2/Z3',dt:'Footing Z2 + 2×20 min Z3',b:'c',k:16,e:200},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · CLÉ',dt:'Préalpes / Vercors bâtons – 4h30',b:'c',k:32,e:1100},{d:'Dim',t:'Repos',dt:'Marche 1h + bâtons',b:'r',k:0}]},
-  {n:13,ph:'Phase 3',lb:'Pic de forme',km:58,ss:[{d:'Lun',t:'Repos',dt:'Repos + kiné',b:'r',k:0},{d:'Mar',t:'Course · Mixte',dt:'6×(3 min Z4 + 2 min Z3)',b:'c',k:14,e:350},{d:'Mer',t:'Salle A · Trail',dt:'Renforcement (maintien)',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 aisé',b:'c',k:12,e:150},{d:'Ven',t:'Salle B · Haut corps',dt:'Haut corps + gainage + kiné',b:'s',k:0},{d:'Sam',t:'Course · Descentes',dt:'Trail focus descentes – 4h',b:'c',k:32,e:1000},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
-  {n:14,ph:'Phase 3',lb:'Récupération',km:38,ss:[{d:'Lun',t:'Repos',dt:'Repos + bilan kiné OBLIGATOIRE',b:'r',k:0},{d:'Mar',t:'Course · Z1',dt:'Footing Z1 très léger',b:'c',k:10,e:100},{d:'Mer',t:'Salle A · Léger',dt:'Renforcement léger + mobilité complète',b:'s',k:0},{d:'Jeu',t:'Course · Z2 + vivacité',dt:'Footing Z2 + 4×1 min Z4',b:'c',k:12,e:150},{d:'Ven',t:'Salle B · Léger',dt:'Haut corps + étirements + kiné',b:'s',k:0},{d:'Sam',t:'Course · Sortie',dt:'Sortie longue modérée Z1/Z2',b:'c',k:16,e:400},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
-  {n:15,ph:'Phase 4',lb:'Affûtage',km:44,ss:[{d:'Lun',t:'Repos',dt:'Repos + kiné maintenance',b:'r',k:0},{d:'Mar',t:'Course · Z2 + vivacité',dt:'Footing Z2 + 3×5 min Z4',b:'c',k:13,e:200},{d:'Mer',t:'Salle A · Allégé',dt:'Renforcement allégé + haut corps',b:'s',k:0},{d:'Jeu',t:'Course · Z2',dt:'Footing Z2 aisé',b:'c',k:11},{d:'Ven',t:'Salle B · Léger',dt:'Haut corps léger + kiné',b:'s',k:0},{d:'Sam',t:'Course · Trail',dt:'Sortie trail Z1/Z2 – technique descente',b:'c',k:20,e:600},{d:'Dim',t:'Repos',dt:'Repos ou marche',b:'r',k:0}]},
-  {n:16,ph:'Phase 4',lb:'Affûtage',km:32,ss:[{d:'Lun',t:'Repos',dt:'Repos + kiné maintenance',b:'r',k:0},{d:'Mar',t:'Course · Z2 + vivacité',dt:'Footing Z2 + 3×3 min Z4',b:'c',k:10,e:150},{d:'Mer',t:'Salle A · Très léger',dt:'Renforcement très léger + mobilité',b:'s',k:0},{d:'Jeu',t:'Course · Z1',dt:'Footing Z1 récupérateur',b:'c',k:9,e:100},{d:'Ven',t:'Salle B · Mobilité',dt:'Mobilité + kiné uniquement',b:'s',k:0},{d:'Sam',t:'Course · Court',dt:'Sortie courte Z1/Z2 – frais',b:'c',k:13,e:350},{d:'Dim',t:'Repos',dt:'Repos complet',b:'r',k:0}]},
-  {n:17,ph:'Phase 4',lb:'Semaine de course',km:10,ss:[{d:'Lun',t:'Repos',dt:'Repos – préparer sac et matériel',b:'r',k:0},{d:'Mar',t:'Course · Ouverture',dt:'20 min Z1 + 3×30 sec Z4',b:'c',k:5,e:50},{d:'Mer',t:'Repos',dt:'Repos – alimentation glucidique',b:'r',k:0},{d:'Jeu',t:'Course · Léger',dt:'15 min Z1 – rester léger',b:'c',k:5,e:30},{d:'Ven',t:'Repos',dt:'Départ Queyras – récupération',b:'r',k:0},{d:'Sam',t:'Repos',dt:'Arrivée – retrait dossard',b:'r',k:0},{d:'Dim',t:'COURSE',dt:'TRAIL DES LACS DU QUEYRAS – 48 km / 3 300m D+',b:'ra',k:48,e:3300}]},
+  {n:1,ph:'Phase 1',lb:'Base aérobie',km:38,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + exercices kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire',dt:'15 allers-retours escaliers funiculaire Montmartre (45m D+ par aller = 675m D+) – Z3/Z4 : 147–175 bpm',b:'c',k:6,e:675},
+    {d:'Mer',t:'Salle A · Jambes',dt:'Squats, fentes avant, step-up, mollets, gainage ventral',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'Footing Z2 aisé 9km terrain plat ou léger (Z2 : 125–147 bpm)',b:'c',k:9,e:80},
+    {d:'Ven',t:'Salle B · Haut corps',dt:'Tractions/tirage barre, dips, rowing haltères, gainage',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · Sortie longue',dt:'EF 14km terrain vallonné – Bois de Vincennes ou Fontainebleau (Z2 : 125–147 bpm)',b:'c',k:14,e:250},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1/Z2 9km récupération active (<140 bpm)',b:'c',k:9,e:80}
+  ]},
+  {n:2,ph:'Phase 1',lb:'Base aérobie',km:42,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire',dt:'17 allers-retours escaliers funiculaire Montmartre (765m D+) – Z3/Z4 : 147–175 bpm',b:'c',k:7,e:765},
+    {d:'Mer',t:'Salle A · Jambes',dt:'Squats, fentes avant/latérales, step-up, mollets, gainage',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'45min EF Z2 terrain vallonné 9km (Z2 : 125–147 bpm)',b:'c',k:9,e:90},
+    {d:'Ven',t:'Salle B · Haut corps',dt:'Tractions, dips, développé épaules, rowing, gainage latéral',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · Sortie longue',dt:'EF 17km terrain vallonné + petites côtes (Z2 : 125–147 bpm)',b:'c',k:17,e:350},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1/Z2 9km récupération active (<140 bpm)',b:'c',k:9,e:80}
+  ]},
+  {n:3,ph:'Phase 1',lb:'Base aérobie',km:44,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire + Foyatier',dt:'20 allers-retours funiculaire (900m D+) + 5 allers escaliers Foyatier en bonus – Z3/Z4',b:'c',k:8,e:950},
+    {d:'Mer',t:'Salle A · Jambes',dt:'Squats bulgares, fentes lestées, single-leg deadlift, mollets, gainage',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'55min EF Z2 terrain vallonné 11km (Z2 : 125–147 bpm)',b:'c',k:11,e:100},
+    {d:'Ven',t:'Salle B · Complet',dt:'Tractions, dips, rowing, développé couché, gainage avancé',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · Sortie longue',dt:'EF 16km terrain varié + côtes (Z2 : 125–147 bpm)',b:'c',k:16,e:380},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1/Z2 9km récupération (<140 bpm)',b:'c',k:9,e:80}
+  ]},
+  {n:4,ph:'Phase 1',lb:'Récupération',km:28,ss:[
+    {d:'Lun',t:'Repos',dt:'Repos + bilan kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire léger',dt:'10 allers-retours funiculaire (450m D+) – allure modérée Z2/Z3 : 125–165 bpm',b:'c',k:5,e:450},
+    {d:'Mer',t:'Salle A · Léger',dt:'Renforcement léger + mobilité hanche/genou',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'40min EF Z2 aisé 8km (125–147 bpm)',b:'c',k:8,e:70},
+    {d:'Ven',t:'Salle B · Léger',dt:'Haut corps léger + étirements complets',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · Sortie modérée',dt:'EF 9km terrain plat ou léger (Z2 : 125–147 bpm)',b:'c',k:9,e:150},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1 6km très léger – récupération (<125 bpm)',b:'c',k:6,e:50}
+  ]},
+  {n:5,ph:'Phase 2',lb:'Développement trail',km:46,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire',dt:'3×8min allers-retours funiculaire Montmartre (Z3/Z4 : 147–175 bpm), récup entre séries – environ 20 allers = 900m D+',b:'c',k:7,e:900},
+    {d:'Mer',t:'Salle A · Trail',dt:'Step-up lesté, fentes lestées, single-leg DL, mollets, gainage dynamique',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'50min EF Z2 terrain vallonné 10km (Z2 : 125–147 bpm)',b:'c',k:10,e:100},
+    {d:'Ven',t:'Salle B · Haut corps',dt:'Circuit haut corps + gainage trail + kiné',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · Trail long',dt:'EF 17km terrain trail/forêt – Fontainebleau ou Chevreuse (Z2 : 125–147 bpm)',b:'c',k:17,e:480},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1/Z2 10km récupération active (<140 bpm)',b:'c',k:10,e:90}
+  ]},
+  {n:6,ph:'Phase 2',lb:'Développement trail',km:50,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire – fractionné',dt:'3×10min allers-retours funiculaire (Z3/Z4 : 147–175 bpm), récup 2min footing – environ 22 allers = 990m D+',b:'c',k:8,e:990},
+    {d:'Mer',t:'Salle A · Trail',dt:'Squats bulgares, step-up lesté, fentes, box jump modéré, gainage',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'55min EF Z2 terrain vallonné 11km (Z2 : 125–147 bpm)',b:'c',k:11,e:100},
+    {d:'Ven',t:'Salle B · Haut corps',dt:'Tirage barre, dips, rowing, développé épaules, gainage',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · Sortie longue',dt:'EF 19km terrain mixte + côtes – Fontainebleau/Chevreuse (Z2 : 125–147 bpm)',b:'c',k:19,e:750},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1/Z2 11km récupération active (<140 bpm)',b:'c',k:11,e:100}
+  ]},
+  {n:7,ph:'Phase 2',lb:'Semaine légère',km:38,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire léger',dt:'12 allers-retours funiculaire (540m D+) – allure modérée Z2/Z3 : 125–165 bpm',b:'c',k:5,e:540},
+    {d:'Mer',t:'Salle A · Jambes',dt:'Renforcement modéré + mobilité hanche/genou',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'50min EF Z2 terrain aisé 10km (Z2 : 125–147 bpm)',b:'c',k:10,e:100},
+    {d:'Ven',t:'Salle B · Haut corps',dt:'Circuit haut corps modéré + gainage',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · Sortie',dt:'EF 14km terrain plat-vallonné (Z2 : 125–147 bpm)',b:'c',k:14,e:280},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1 9km récupération active (<125 bpm)',b:'c',k:9,e:80}
+  ]},
+  {n:8,ph:'Phase 2',lb:'Développement trail',km:50,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire – seuil',dt:'35min Z2 + 15min Z3 + 10min Z2 avec sections funiculaire intégrées – environ 20 allers = 900m D+',b:'c',k:9,e:900},
+    {d:'Mer',t:'Salle A · Trail',dt:'Squats bulgares, single-leg DL, step-up, mollets lestés, gainage avancé',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'50min EF Z2 terrain vallonné 10km (Z2 : 125–147 bpm)',b:'c',k:10,e:100},
+    {d:'Ven',t:'Salle B · Haut corps',dt:'Tirage, dips, rowing, gainage trail, kiné',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · 19km rythmé',dt:'19km dont 10km @Z3 (147–165 bpm) + côtes',b:'c',k:19,e:650},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1/Z2 12km récupération active (<140 bpm)',b:'c',k:12,e:110}
+  ]},
+  {n:9,ph:'Phase 2',lb:'Développement trail',km:52,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire – fractionné',dt:'3×10min allers-retours funiculaire (Z3/Z4 : 147–175 bpm), récup 2min footing – 25 allers = 1125m D+',b:'c',k:9,e:1125},
+    {d:'Mer',t:'Salle A · Trail',dt:'Step-up lesté, squats bulgares, single-leg DL, box jump, gainage',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'60min EF Z2 terrain vallonné 12km (Z2 : 125–147 bpm)',b:'c',k:12,e:120},
+    {d:'Ven',t:'Salle B · Haut corps',dt:'Circuit haut corps complet + gainage trail + kiné',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · Trail long',dt:'EF 19km terrain trail + côtes – Fontainebleau ou Chevreuse (Z2 : 125–147 bpm)',b:'c',k:19,e:680},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1/Z2 12km récupération active (<140 bpm)',b:'c',k:12,e:110}
+  ]},
+  {n:10,ph:'Phase 3',lb:'Trail spécifique',km:54,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire intensif',dt:'25 allers-retours funiculaire Montmartre (1125m D+) – séance principale D+ (Z3/Z4 : 147–175 bpm)',b:'c',k:10,e:1125},
+    {d:'Mer',t:'Salle A · Trail intensif',dt:'Squats bulgares lestés, single-leg DL, box jump, step-up, gainage',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'65min EF Z2 terrain vallonné 13km (Z2 : 125–147 bpm)',b:'c',k:13,e:150},
+    {d:'Ven',t:'Salle B · Haut corps',dt:'Tirage, dips, rowing, gainage avancé, kiné',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · Longue Z2/Z3',dt:'21km EF dont 40min @Z3 (147–165 bpm) + côtes – terrain mixte',b:'c',k:21,e:420},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1/Z2 9km récupération (<140 bpm)',b:'c',k:9,e:90}
+  ]},
+  {n:11,ph:'Phase 3',lb:'Trail spécifique',km:50,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire intensif',dt:'25 allers-retours funiculaire + 10 allers Foyatier (1125+450 = 1575m D+) – Z3/Z4 : 147–175 bpm',b:'c',k:10,e:1125},
+    {d:'Mer',t:'Salle A · Trail',dt:'Single-leg DL, squats bulgares, step-up lesté, mollets, gainage',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'50min EF Z2 terrain vallonné 10km (Z2 : 125–147 bpm)',b:'c',k:10,e:100},
+    {d:'Ven',t:'Salle B · Haut corps',dt:'Circuit haut corps + gainage trail + kiné',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · 21km rythmé',dt:'21km dont 15km @Z3 (147–165 bpm) – travail au seuil bas',b:'c',k:21,e:400},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1 9km récupération (<125 bpm)',b:'c',k:9,e:90}
+  ]},
+  {n:12,ph:'Phase 3',lb:'Pic de forme',km:59,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire intensif',dt:'28 allers-retours funiculaire Montmartre (1260m D+) – Z3/Z4 : 147–175 bpm',b:'c',k:11,e:1260},
+    {d:'Mer',t:'Salle A · Trail',dt:'Squats bulgares, single-leg DL, box jump, gainage – charge maintenue',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'65min EF Z2 terrain vallonné 13km (Z2 : 125–147 bpm)',b:'c',k:13,e:150},
+    {d:'Ven',t:'Salle B · Haut corps',dt:'Circuit complet haut corps + gainage trail + kiné',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · Sortie longue',dt:'EF 25km terrain trail + côtes – Fontainebleau/Chevreuse (Z2 : 125–147 bpm)',b:'c',k:25,e:650},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1/Z2 10km récupération (<140 bpm)',b:'c',k:10,e:100}
+  ]},
+  {n:13,ph:'Phase 3',lb:'Pic de forme – Sardaigne',km:56,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire max',dt:'30 allers-retours funiculaire Montmartre (1350m D+) – séance D+ maximale (Z3/Z4 : 147–175 bpm)',b:'c',k:11,e:1350},
+    {d:'Mer',t:'Salle A · Trail',dt:'Squats bulgares, single-leg DL, step-up, gainage – renforcement complet',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'65′ EF Z2 terrain vallonné 13km (Z2 : 125–147 bpm)',b:'c',k:13,e:150},
+    {d:'Ven',t:'Repos',dt:'Départ Sardaigne – récupération voyage',b:'r',k:0,e:0},
+    {d:'Sam',t:'Course · Sortie longue Sardaigne',dt:'22km terrain rocheux côtier île de la Maddalena. Terrain naturel varié, appuis irréguliers, travailler les descentes techniques (Z2 : 125–147 bpm)',b:'c',k:22,e:500},
+    {d:'Dim',t:'Course · EF moyen Sardaigne',dt:'EF Z1/Z2 10km terrain côtier – profiter du terrain naturel sans forcer (<140 bpm)',b:'c',k:10,e:200}
+  ]},
+  {n:14,ph:'Phase 3',lb:'Pic de forme – seuil',km:57,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire – seuil',dt:'28 allers-retours funiculaire (1260m D+) dont 2 séries avec palier Z4 – Z3/Z4 : 147–175 bpm',b:'c',k:10,e:1260},
+    {d:'Mer',t:'Salle A · Trail',dt:'Squats, single-leg DL, gainage – maintien de la charge',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · Mixte seuil',dt:'35min Z2 (125–147) / 15min Z3 (147–165) / 10min Z2 – 13km',b:'c',k:13,e:150},
+    {d:'Ven',t:'Salle B · Haut corps',dt:'Circuit complet + gainage trail + kiné',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · 24km rythmé',dt:'24km dont 15km @Z3 (147–165 bpm) + côtes',b:'c',k:24,e:430},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1 10km récupération (<125 bpm)',b:'c',k:10,e:100}
+  ]},
+  {n:15,ph:'Phase 3',lb:'WE choc – pic D+',km:60,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire intensif',dt:'25 allers-retours funiculaire (1125m D+) – Z3/Z4 : 147–175 bpm',b:'c',k:10,e:1125},
+    {d:'Mer',t:'Salle A · Maintien',dt:'Renforcement léger – mobilité hanche/genou, gainage',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'65min EF Z2 terrain vallonné 13km (Z2 : 125–147 bpm)',b:'c',k:13,e:150},
+    {d:'Ven',t:'Salle B · Léger',dt:'Haut corps léger + étirements + kiné',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · WE choc montagne',dt:'OBLIGATOIRE : sortie montagne 25km + 2500 D+ – travailler autour de Z2/Z3 (125–165 bpm)',b:'c',k:25,e:2500},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1 9km récupération post-choc (<125 bpm)',b:'c',k:9,e:100}
+  ]},
+  {n:16,ph:'Phase 4',lb:'WE choc – Chamonix',km:55,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire léger',dt:'12 allers-retours funiculaire (540m D+) – allure Z2/Z3 modérée, ne pas entamer les réserves avant Chamonix',b:'c',k:6,e:540},
+    {d:'Mer',t:'Salle A · Léger',dt:'Renforcement léger + mobilité hanche/genou + kiné – dernière salle avant le WE choc',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · EF Z2',dt:'50′ EF Z2 terrain vallonné 10km (Z2 : 125–147 bpm) – garder les jambes fraîches',b:'c',k:10,e:100},
+    {d:'Ven',t:'Repos',dt:'Départ Chamonix – arrivée, récupération voyage, repérage sentier',b:'r',k:0,e:0},
+    {d:'Sam',t:'Course · WE choc Chamonix',dt:'OBLIGATOIRE : 25km + 2200m D+ @Z2/Z3 (125–165 bpm). Terrain alpin directement transférable au Queyras. Objectif : fatigue de course sans se blesser.',b:'c',k:25,e:2200},
+    {d:'Dim',t:'Course · EF moyen Chamonix',dt:'EF Z1 10km récupération post-choc – terrain plat vallée (<125 bpm). Ne pas repartir cassé.',b:'c',k:10,e:200}
+  ]},
+  {n:17,ph:'Phase 4',lb:'Affûtage',km:34,ss:[
+    {d:'Lun',t:'Repos',dt:'Récupération + kiné',b:'r',k:0,e:0},
+    {d:'Mar',t:'Côtes funiculaire léger',dt:'10 allers-retours funiculaire (450m D+) – allure modérée, rester frais (Z2/Z3 : 125–165 bpm)',b:'c',k:5,e:450},
+    {d:'Mer',t:'Salle A · Très léger',dt:'Renforcement très léger + mobilité complète',b:'s',k:0,e:0},
+    {d:'Jeu',t:'Course · Fractionné court',dt:'3×8min @Z3/Z4/Z3 (147–175 bpm), récup 2min footing – 9km total',b:'c',k:9,e:150},
+    {d:'Ven',t:'Salle B · Mobilité',dt:'Haut corps léger + étirements + kiné',b:'s',k:0,e:0},
+    {d:'Sam',t:'Course · EF léger',dt:'EF 12km terrain plat (Z2 : 125–147 bpm) – maintenir sans fatiguer',b:'c',k:12,e:200},
+    {d:'Dim',t:'Course · EF moyen',dt:'EF Z1 8km récupération (<125 bpm)',b:'c',k:8,e:80}
+  ]},
+  {n:18,ph:'Phase 4',lb:'Affûtage final',km:22,ss:[
+    {d:'Lun',t:'Repos',dt:'Repos + kiné légère',b:'r',k:0,e:0},
+    {d:'Mar',t:'Course · Activation',dt:'20min Z1-Z2 + 3×30sec @Z4 (165–175 bpm) – 4km, garder les jambes vives',b:'c',k:4,e:50},
+    {d:'Mer',t:'Repos',dt:'Repos – nutrition glucidique, hydratation',b:'r',k:0,e:0},
+    {d:'Jeu',t:'Course · EF léger',dt:'25min Z1/Z2 très léger 5km – rester frais (<140 bpm)',b:'c',k:5,e:50},
+    {d:'Ven',t:'Repos',dt:'Repos complet – préparer sac et matériel',b:'r',k:0,e:0},
+    {d:'Sam',t:'Course · Reconnaissance',dt:'8km EF Z1 terrain facile – tester les jambes (<130 bpm)',b:'c',k:8,e:80},
+    {d:'Dim',t:'Repos',dt:'Repos complet – récupération mentale et physique',b:'r',k:0,e:0}
+  ]},
+  {n:19,ph:'Phase 4',lb:'Semaine de course',km:63,ss:[
+    {d:'Lun',t:'Repos',dt:'Repos – derniers préparatifs, vérification matériel',b:'r',k:0,e:0},
+    {d:'Mar',t:'Course · Activation',dt:'15min Z1 + 4×20sec strides – 3km, activation légère (<130 bpm)',b:'c',k:3,e:30},
+    {d:'Mer',t:'Repos',dt:'Repos – nutrition glucidique, coucher tôt',b:'r',k:0,e:0},
+    {d:'Jeu',t:'Course · Très léger',dt:'10min Z1 – 2km juste pour bouger les jambes (<125 bpm)',b:'c',k:2,e:20},
+    {d:'Ven',t:'Repos',dt:'Départ Queyras – installation, retrait dossard, repérage départ',b:'r',k:0,e:0},
+    {d:'Sam',t:'COURSE',dt:'TRAIL DES LACS DU QUEYRAS – 48km / 3300m D+ – Objectif 10–12h',b:'ra',k:48,e:3300},
+    {d:'Dim',t:'Repos',dt:'Récupération post-course – massage, alimentation, repos',b:'r',k:0,e:0}
+  ]},
 ];
 
 function ld(){try{return JSON.parse(localStorage.getItem(SK))||{};}catch(e){return{};}}
@@ -489,7 +731,7 @@ if(!D.splits)D.splits={};
 if(!D.weekStatus)D.weekStatus={};
 
 function daysLeft(){return Math.max(0,Math.ceil((RACE-new Date())/86400000));}
-function curWeek(){const e=Math.floor((new Date()-START)/86400000);if(e<0)return 1;return Math.min(Math.floor(e/7)+1,17);}
+function curWeek(){const e=Math.floor((new Date()-START)/86400000);if(e<0)return 1;return Math.min(Math.floor(e/7)+1,19);}
 function sk2(w,i){return 'w'+w+'s'+i;}
 function fmtDur(s){const h=Math.floor(s/3600),m=Math.floor((s%3600)/60);return h>0?h+'h'+String(m).padStart(2,'0'):m+'min';}
 function fmtKm(m){return (m/1000).toFixed(1)+' km';}
@@ -950,8 +1192,8 @@ function rdash(){
   document.getElementById('hdays').textContent=d;
   const r=37,ci=2*Math.PI*r,rp=document.getElementById('rprog');
   rp.style.strokeDasharray=ci;rp.style.strokeDashoffset=ci*(1-pct);
-  const phs=['Base aérobie S1–S4','Trail spécifique S5–S10','Pic de forme S11–S14','Affûtage S15–S17'];
-  document.getElementById('ppill').textContent=phs[c<=4?0:c<=10?1:c<=14?2:3];
+  const phs=['Base aérobie S1–S4','Développement trail S5–S9','Trail spécifique S10–S15','Affûtage S16–S19'];
+  document.getElementById('ppill').textContent=phs[c<=4?0:c<=9?1:c<=15?2:3];
   const st=gst();
   document.getElementById('sdone').textContent=st.dn;
   document.getElementById('skm').textContent=st.km;
@@ -965,7 +1207,7 @@ function rdash(){
   if(cw){const card=buildWeekCard(cw,c,true);cwrap.appendChild(card);}
   // Full programme in sec-prog
   const strip=document.getElementById('pstrip');if(strip){strip.innerHTML='';
-  [['S1–S4','Base aérobie',1,4],['S5–S10','Trail spécifique',5,10],['S11–S14','Pic de forme',11,14],['S15–S17','Affûtage',15,17]].forEach(([r2,n,a,b])=>{
+  [['S1–S4','Base aérobie',1,4],['S5–S9','Développement trail',5,9],['S10–S15','Trail spécifique',10,15],['S16–S19','Affûtage',16,19]].forEach(([r2,n,a,b])=>{
     const ch=document.createElement('div');ch.className='pc';ch.textContent=n+' · '+r2;
     if(c>=a&&c<=b)ch.classList.add('cur');else if(c>b)ch.classList.add('dn');
     strip.appendChild(ch);
@@ -1093,7 +1335,7 @@ function rstats(){
   const g=st.tot>0?Math.round(st.dn/st.tot*100):0,c=st.ct>0?Math.round(st.cd/st.ct*100):0,s=st.st2>0?Math.round(st.sd/st.st2*100):0;
   [['pb1',g],['pb2',c],['pb3',s]].forEach(([id,p])=>{document.getElementById(id).style.width=p+'%';document.getElementById(id+'p').textContent=p+'%';});
   const cwn=curWeek();const ps=(a,b)=>cwn<a?'À venir':cwn>b?'Terminée':'S'+cwn;
-  ['ph1s','ph2s','ph3s','ph4s'].forEach((id,i)=>{const[a,b]=[[1,4],[5,10],[11,14],[15,17]][i];document.getElementById(id).textContent=ps(a,b);});
+  ['ph1s','ph2s','ph3s','ph4s'].forEach((id,i)=>{const[a,b]=[[1,4],[5,9],[10,15],[16,19]][i];document.getElementById(id).textContent=ps(a,b);});
   updateStravaStats();
   renderStravaActs();
 }
@@ -1105,7 +1347,7 @@ document.querySelectorAll('.nb').forEach(btn=>{btn.addEventListener('click',()=>
   document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.sec').forEach(x=>x.classList.remove('active'));
   btn.classList.add('active');document.getElementById('sec-'+s).classList.add('active');
-  if(s==='stats')rstats();if(s==='journal')rjournal();if(s==='dash')rdash();if(s==='prog')rdash();
+  if(s==='stats')rstats();if(s==='journal')rjournal();if(s==='dash')rdash();if(s==='prog')rdash();if(s==='nutri'){};
 });});
 
 document.querySelectorAll('.pb2').forEach(btn=>{btn.addEventListener('click',()=>{const z=btn.dataset.z,v=parseInt(btn.dataset.v);D.pain[z]=D.pain[z]===v?-1:v;sv(D);rjournal();});});
